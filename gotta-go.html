@@ -171,8 +171,8 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
       <details class="howto" open>
         <summary>How to play</summary>
         <ul>
-          <li><b>Share one phone.</b> Each player drags anywhere on their half of the screen to steer. On a keyboard, Player 1 uses <b>WASD</b> and Player 2 uses the <b>arrow keys</b>.</li>
-          <li>Reach the <b>toilet</b> first. The loser poops their pants on the spot.</li>
+          <li><b>Share one phone.</b> Put it between you. You start at opposite ends, and your half of the screen is your joystick: drag anywhere on it to steer. On a keyboard, Player 1 uses <b>WASD</b> and Player 2 uses the <b>arrow keys</b>.</li>
+          <li>The <b>toilet</b> is in the middle. Reach it first. The loser poops their pants on the spot.</li>
           <li>Watch the meters on your side: <span class="dot" style="background:var(--pee)"></span> <b>bladder</b> and <span class="dot" style="background:var(--poop)"></span> <b>bowels</b>. If either one empties, you have an accident and you're out.</li>
           <li>Puddles are slippery and bananas send you spinning. Janitors, roombas, goats and mall cops knock you back. Bump your rival out of the way.</li>
           <li>Pickups: <b>coffee</b> and <b>chili</b> give a burst of speed but drain your bladder or bowels. A <b>cork</b> calms both meters.</li>
@@ -251,66 +251,65 @@ const NPC = {
 /* ---------------------------------------------------------------- maps */
 const THEMES = {
   office: { name:'The Office', blurb:'Cubicles, wet floors and a grumpy janitor.', outside:'#1f2642', panel:'#2b3358',
-    floorA:'#6a7fa8', floorB:'#627699', rimTop:'#e3e8f2', rimFront:'#a3aec8', puddle:'water',
+    floorA:'#6a7fa8', floorB:'#627699', rimTop:'#e3e8f2', rimFront:'#a3aec8', puddle:'water', wallA:'#d5ddee', wallB:'#b4c0da',
     boothBody:'#eef1f7', boothFront:'#c7cfe2', door:'#4a74c4', sign:'WC', dust:'#d4dcf0', swatch:'linear-gradient(135deg,#6a7fa8 50%,#e3e8f2 50%)' },
   mall: { name:'Mega Mall', blurb:'Fountains, kiosks and a mall cop on a segway.', outside:'#2d2340', panel:'#3b2f55',
-    floorA:'#f3ede2', floorB:'#e2d9c8', rimTop:'#fffaf1', rimFront:'#d8cbb5', puddle:'water',
+    floorA:'#f3ede2', floorB:'#e2d9c8', rimTop:'#fffaf1', rimFront:'#d8cbb5', puddle:'water', wallA:'#f7ead6', wallB:'#e5cfae',
     boothBody:'#fff7ea', boothFront:'#e5d6bd', door:'#d4554e', sign:'WC', dust:'#ffffff', swatch:'linear-gradient(135deg,#f3ede2 50%,#d4554e 50%)' },
   fest: { name:'Mud Fest', blurb:'Mud, hay bales, ravers and a loose goat.', outside:'#1b3326', panel:'#24452f',
-    floorA:'#74bf4e', floorB:'#69b245', rimTop:'#c99a5b', rimFront:'#8e6536', puddle:'mud',
+    floorA:'#74bf4e', floorB:'#69b245', rimTop:'#c99a5b', rimFront:'#8e6536', puddle:'mud', wallA:'#16325e', wallB:'#3f78c4',
     boothBody:'#3b8fe0', boothFront:'#2a6db5', door:'#2f79c6', sign:'moon', dust:'#a77d4a', swatch:'linear-gradient(135deg,#74bf4e 50%,#3b8fe0 50%)' },
 };
-// u runs along the race (start 0 to toilet 1), v runs across it. m:1 adds a mirror copy across v = .5 so both lanes are fair.
+// u runs from Player 1's end (0) to Player 2's end (1); the toilet sits at u = .5. v runs across.
+// m:1 copies the item into the other player's half (u -> 1 - u) so both routes are identical.
 const LEVELS = {
   office: {
     obs: [
-      { t:'wall', r:[.17,0,.20,.36], z:72, m:1 },
-      { t:'plant', c:[.25,.07], rad:22, m:1 },
-      { t:'desk', r:[.30,.30,.38,.70], z:44 },
-      { t:'wall', r:[.47,0,.50,.40], z:72, m:1 },
-      { t:'cooler', c:[.565,.5], rad:24 },
-      { t:'sign', c:[.60,.19], rad:12, m:1 },
-      { t:'desk', r:[.62,.24,.70,.76], z:44 },
-      { t:'copier', r:[.745,0,.785,.10], z:58, m:1 },
+      { t:'plant', c:[.045,.09], rad:20, m:1 },
+      { t:'plant', c:[.045,.91], rad:20, m:1 },
+      { t:'wall', r:[.14,0,.16,.62], z:72, m:1 },
+      { t:'wall', r:[.25,.38,.27,1], z:72, m:1 },
+      { t:'plant', c:[.36,.08], rad:22, m:1 },
+      { t:'cooler', c:[.38,.30], rad:24, m:1 },
+      { t:'sign', c:[.31,.40], rad:12, m:1 },
+      { t:'desk', r:[.33,.64,.39,1], z:44, m:1 },
     ],
-    puddles: [ { c:[.565,.31], rx:64, ry:30, m:1 }, { c:[.665,.11], rx:58, ry:26, m:1 } ],
+    puddles: [ { c:[.205,.80], rx:46, ry:26, m:1 }, { c:[.31,.22], rx:58, ry:28, m:1 } ],
     movers: [
-      { t:'janitor', line:[[.42,.12],[.42,.88]], speed:115 },
-      { t:'roomba', circle:[.25,.5], r:58, speed:1.5 },
-      { t:'roomba', line:[[.722,.15],[.722,.40]], speed:85, m:1 },
+      { t:'roomba', line:[[.205,.12],[.205,.66]], speed:95, m:1 },
+      { t:'janitor', circle:[.5,.5], r:150, speed:0.75 },
     ],
     bananas: 1,
   },
   mall: {
     obs: [
-      { t:'fountain', c:[.30,.5], rad:92 },
-      { t:'pillar', c:[.30,.12], rad:20, m:1 },
-      { t:'bench', r:[.16,0,.20,.16], z:26, m:1 },
-      { t:'kiosk', r:[.42,0,.50,.33], z:70, m:1, label:'SMOOTHIES' },
-      { t:'pillar', c:[.54,.12], rad:18, m:1 },
-      { t:'planter', r:[.59,.28,.65,.72], z:38 },
-      { t:'fountain', c:[.74,.14], rad:44, m:1 },
+      { t:'fountain', c:[.20,.5], rad:80, m:1 },
+      { t:'pillar', c:[.20,.10], rad:18, m:1 },
+      { t:'pillar', c:[.20,.90], rad:18, m:1 },
+      { t:'kiosk', r:[.30,0,.36,.38], z:70, m:1, label:'SMOOTHIES' },
+      { t:'bench', r:[.30,.70,.33,1], z:26, m:1 },
+      { t:'planter', r:[.06,0,.10,.12], z:34, m:1 },
     ],
-    puddles: [ { c:[.30,.25], rx:66, ry:28, m:1 }, { c:[.74,.32], rx:50, ry:24, m:1 } ],
+    puddles: [ { c:[.20,.25], rx:54, ry:24, m:1 }, { c:[.20,.75], rx:54, ry:24, m:1 } ],
     movers: [
-      { t:'cop', line:[[.385,.5],[.56,.5]], speed:150 },
-      { t:'stroller', line:[[.68,.05],[.68,.26]], speed:80, m:1 },
+      { t:'cop', line:[[.405,.10],[.405,.90]], speed:140, m:1 },
+      { t:'stroller', line:[[.27,.60],[.27,.94]], speed:75, m:1 },
     ],
-    bananas: 3,
+    bananas: 2,
   },
   fest: {
     obs: [
-      { t:'hay', r:[.15,0,.19,.30], z:40, m:1 },
-      { t:'tent', r:[.26,.36,.36,.64], z:84 },
-      { t:'speaker', r:[.46,0,.50,.42], z:110, m:1 },
-      { t:'hay', r:[.62,.25,.66,.75], z:40 },
-      { t:'hay', r:[.74,0,.77,.14], z:40, m:1 },
+      { t:'hay', r:[.14,.30,.17,.70], z:40, m:1 },
+      { t:'speaker', r:[.25,0,.29,.30], z:110, m:1 },
+      { t:'speaker', r:[.25,.70,.29,1], z:110, m:1 },
+      { t:'tent', r:[.34,0,.42,.15], z:84, m:1 },
+      { t:'hay', r:[.35,.85,.40,1], z:40, m:1 },
     ],
-    puddles: [ { c:[.215,.5], rx:58, ry:40 }, { c:[.40,.22], rx:70, ry:32, m:1 }, { c:[.565,.5], rx:58, ry:46 }, { c:[.70,.10], rx:52, ry:28, m:1 } ],
+    puddles: [ { c:[.21,.5], rx:40, ry:62, m:1 }, { c:[.10,.16], rx:50, ry:30, m:1 }, { c:[.10,.84], rx:50, ry:30, m:1 }, { c:[.355,.70], rx:40, ry:26, m:1 } ],
     movers: [
-      { t:'dancerA', circle:[.56,.5], r:56, speed:1.4 },
-      { t:'dancerB', circle:[.40,.15], r:38, speed:-1.8, m:1 },
-      { t:'goat', wander:[.68,.15,.82,.85], speed:115 },
+      { t:'dancerA', circle:[.34,.5], r:44, speed:1.4, m:1 },
+      { t:'goat', wander:[.38,.18,.62,.29], speed:110 },
+      { t:'goat', wander:[.38,.71,.62,.82], speed:110 },
     ],
     bananas: 1,
   },
@@ -851,7 +850,7 @@ const view = { sc: 1, ax: 0, ay: 0 };
 let floorCv = null;
 const sel = [0, 1];
 let mapId = 'office';
-const BASE_SPEED = 210, DRAIN = 5, CHK = 1.34, PR = 20;
+const BASE_SPEED = 210, DRAIN = 5.5, CHK = 1.34, PR = 20, TOPM = 110;
 try { const s = JSON.parse(localStorage.getItem('gottago-setup') || 'null'); if (s) { if (CHARS[s.a]) sel[0] = s.a; if (CHARS[s.b]) sel[1] = s.b; if (LEVELS[s.m]) mapId = s.m; } } catch (e) {}
 
 const LINES = {
@@ -877,8 +876,8 @@ function layout() {
 }
 function fitView() {
   if (!level) return;
-  const a = arenaBox(), sc = Math.min(a.w / level.W, a.h / level.H);
-  view.sc = sc; view.ax = a.x + (a.w - level.W * sc) / 2; view.ay = a.y + (a.h - level.H * sc) / 2;
+  const a = arenaBox(), sc = Math.min(a.w / level.W, a.h / (level.H + TOPM));
+  view.sc = sc; view.ax = a.x + (a.w - level.W * sc) / 2; view.ay = a.y + (a.h - (level.H + TOPM) * sc) / 2 + TOPM * sc;
   renderFloor();
 }
 let resizeQueued = false;
@@ -888,41 +887,37 @@ window.addEventListener('resize', () => { if (resizeQueued) return; resizeQueued
 function buildLevel(id) {
   const def = LEVELS[id], th = THEMES[id];
   const a = arenaBox(), port = a.h > a.w;
-  const ratio = port ? a.w / a.h : a.h / a.w;
-  const S = clamp(Math.round(1600 * ratio), 660, 1100);
+  const ratio = port ? a.w / (a.h * 1600 / (1600 + TOPM)) : a.h / a.w;
+  // the back wall strip takes some of the height; size the short axis to what is left
+  const S = clamp(Math.round(port ? 1600 * ratio : 1600 * ratio - TOPM), 660, 1100);
   const W = port ? S : 1600, H = port ? 1600 : S;
   const tv = (u, v) => port ? [v * W, (1 - u) * H] : [u * W, v * H];
   const lv = { id, th, W, H, port, tv, obs: [], puddles: [], rim: 16 };
-  lv.mirror = (x, y) => port ? [W - x, y] : [x, H - y];
+  lv.mirror = (x, y) => port ? [x, H - y] : [W - x, y];
   const addObs = (o, mir) => {
     const q = Object.assign({}, o);
     if (o.r) {
-      let [u0, v0, u1, v1] = o.r; if (mir) [v0, v1] = [1 - v1, 1 - v0];
+      let [u0, v0, u1, v1] = o.r; if (mir) [u0, u1] = [1 - u1, 1 - u0];
       const p0 = tv(u0, v0), p1 = tv(u1, v1);
       q.x = Math.min(p0[0], p1[0]); q.y = Math.min(p0[1], p1[1]); q.w = Math.abs(p1[0] - p0[0]); q.h = Math.abs(p1[1] - p0[1]);
       q.shape = 'rect'; q.sortY = q.y + q.h;
     } else {
-      const [u, v] = o.c; const p = tv(u, mir ? 1 - v : v);
+      const [u, v] = o.c; const p = tv(mir ? 1 - u : u, v);
       q.x = p[0]; q.y = p[1]; q.shape = 'circ'; q.sortY = q.y;
     }
     lv.obs.push(q);
   };
   for (const o of def.obs) { addObs(o, false); if (o.m) addObs(o, true); }
   for (const p of def.puddles) {
-    const add = mir => { const pt = tv(p.c[0], mir ? 1 - p.c[1] : p.c[1]); lv.puddles.push({ x: pt[0], y: pt[1], rx: p.rx, ry: p.ry, type: th.puddle }); };
+    const add = mir => { const pt = tv(mir ? 1 - p.c[0] : p.c[0], p.c[1]); lv.puddles.push({ x: pt[0], y: pt[1], rx: p.rx, ry: p.ry, type: th.puddle }); };
     add(false); if (p.m) add(true);
   }
-  if (port) {
-    lv.booth = { x: W / 2 - 68, y: 166, w: 136, h: 56, z: 150 };
-    lv.goal = { x: W / 2, y: 166 + 56 + 44, r: 46 };
-    lv.starts = [[W * 0.38, H - 92], [W * 0.62, H - 92]];
-  } else {
-    lv.booth = { x: W - 190, y: H / 2 - 46, w: 136, h: 56, z: 150 };
-    lv.goal = { x: W - 122, y: H / 2 + 54, r: 46 };
-    lv.starts = [[92, H * 0.38], [92, H * 0.62]];
-  }
-  lv.booth.shape = 'rect'; lv.booth.t = 'booth'; lv.booth.sortY = lv.booth.y + lv.booth.h;
-  lv.solids = lv.obs.concat([lv.booth]);
+  // the toilet stands in the middle; touching the ring around it from any side wins
+  lv.booth = { x: W / 2 - 68, y: H / 2 - 50, w: 136, h: 56, z: 130, t: 'booth' };
+  lv.booth.sortY = lv.booth.y + lv.booth.h;
+  lv.goal = { x: W / 2, y: H / 2 - 8, r: 86 };
+  lv.starts = port ? [[W / 2, H - 110], [W / 2, 110]] : [[110, H / 2], [W - 110, H / 2]];
+  lv.solids = lv.obs;
   // movers
   const ms = [];
   for (const m of def.movers) {
@@ -949,7 +944,7 @@ function solidHit(x, y, r) {
 }
 function spawnPair(kind, type) {
   for (let tries = 0; tries < 40; tries++) {
-    const u = rand(0.13, 0.8), v = rand(0.06, 0.46);
+    const u = rand(0.08, 0.41), v = rand(0.06, 0.94);
     const [x, y] = level.tv(u, v), [mx, my] = level.mirror(x, y);
     if (solidHit(x, y, 26) || solidHit(mx, my, 26)) continue;
     const list = kind === 'banana' ? bananas : pickups;
@@ -963,12 +958,33 @@ function spawnPair(kind, type) {
 }
 
 /* ---------------------------------------------------------------- floor */
+function drawBackWall(c, W, th) {
+  const g2 = c.createLinearGradient(0, -TOPM, 0, 0); g2.addColorStop(0, th.wallA); g2.addColorStop(1, th.wallB);
+  c.fillStyle = g2; c.fillRect(0, -TOPM, W, TOPM);
+  c.save(); c.lineWidth = 3; c.strokeStyle = INK;
+  if (level.id === 'office') {
+    for (let x = 90; x < W - 120; x += 260) { if (Math.abs(x + 70 - W / 2) < 140) continue; rr(c, x, -TOPM + 22, 140, 58, 6); c.fillStyle = '#9fd4ff'; c.fill(); c.stroke(); c.beginPath(); c.moveTo(x + 70, -TOPM + 22); c.lineTo(x + 70, -TOPM + 80); c.stroke(); c.fillStyle = 'rgba(255,255,255,.55)'; c.beginPath(); c.moveTo(x + 14, -TOPM + 74); c.lineTo(x + 40, -TOPM + 28); c.lineTo(x + 54, -TOPM + 28); c.lineTo(x + 28, -TOPM + 74); c.fill(); }
+    circ(c, W / 2, -TOPM + 46, 22); c.fillStyle = '#ffffff'; c.fill(); c.stroke(); c.beginPath(); c.moveTo(W / 2, -TOPM + 46); c.lineTo(W / 2, -TOPM + 32); c.moveTo(W / 2, -TOPM + 46); c.lineTo(W / 2 + 10, -TOPM + 50); c.stroke();
+  } else if (level.id === 'mall') {
+    const shops = [['#ff6b6b', 'SHOES'], ['#4dabf7', 'PHONES'], ['#ffd43b', 'CANDY'], ['#69db7c', 'BOOKS'], ['#b197fc', 'TOYS']];
+    let k = 0; for (let x = 70; x < W - 160; x += 230) { if (Math.abs(x + 80 - W / 2) < 150) continue; const [col, name] = shops[k++ % shops.length];
+      rr(c, x, -TOPM + 18, 160, 30, 6); c.fillStyle = col; c.fill(); c.stroke(); c.fillStyle = INK; c.font = `20px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name, x + 80, -TOPM + 34);
+      rr(c, x + 10, -TOPM + 54, 140, 40, 4); c.fillStyle = 'rgba(160,215,255,.8)'; c.fill(); c.stroke(); }
+  } else {
+    c.fillStyle = 'rgba(255,255,255,.8)'; const rnd2 = mulberry(7); for (let i = 0; i < 40; i++) { circ(c, rnd2() * W, -TOPM + rnd2() * 60, rnd2() * 1.6 + 0.4); c.fill(); }
+    c.beginPath(); c.moveTo(0, -TOPM + 30); for (let x = 0; x <= W; x += 20) c.lineTo(x, -TOPM + 30 + Math.sin(x / 200 * Math.PI) * 24); c.lineWidth = 2; c.strokeStyle = '#1b1b2a'; c.stroke();
+    const cols = ['#ff4fa3', '#ffe14d', '#4dff9a', '#4dc3ff']; for (let x = 20, i = 0; x < W; x += 40, i++) { const y = -TOPM + 30 + Math.sin(x / 200 * Math.PI) * 24; c.fillStyle = cols[i % 4]; c.beginPath(); c.moveTo(x - 9, y); c.lineTo(x + 9, y); c.lineTo(x, y + 20); c.closePath(); c.fill(); }
+  }
+  c.restore();
+  c.fillStyle = th.rimFront; c.fillRect(0, -14, W, 14); c.fillStyle = 'rgba(0,0,0,.15)'; c.fillRect(0, -4, W, 4);
+}
 function renderFloor() {
   if (!level) return;
   const sc = view.sc * dpr, W = level.W, H = level.H, th = level.th;
   floorCv = floorCv || document.createElement('canvas');
-  floorCv.width = Math.max(1, Math.ceil(W * sc)); floorCv.height = Math.max(1, Math.ceil(H * sc));
-  const c = floorCv.getContext('2d'); c.setTransform(sc, 0, 0, sc, 0, 0);
+  floorCv.width = Math.max(1, Math.ceil(W * sc)); floorCv.height = Math.max(1, Math.ceil((H + TOPM) * sc));
+  const c = floorCv.getContext('2d'); c.setTransform(sc, 0, 0, sc, 0, TOPM * sc);
+  drawBackWall(c, W, th);
   const rnd = mulberry(level.id.length * 999 + Math.round(W));
   c.fillStyle = th.floorA; c.fillRect(0, 0, W, H);
   if (level.id === 'office') {
@@ -987,11 +1003,13 @@ function renderFloor() {
     for (let i = 0; i < W * H / 900; i++) { const x = rnd() * W, y = rnd() * H; c.beginPath(); c.moveTo(x, y); c.lineTo(x + rnd() * 4 - 2, y - 5 - rnd() * 5); c.stroke(); }
     c.fillStyle = '#ffffff'; for (let i = 0; i < 40; i++) { const x = rnd() * W, y = rnd() * H; for (let k = 0; k < 5; k++) { circ(c, x + Math.cos(k * 1.26) * 3, y + Math.sin(k * 1.26) * 3, 2); c.fill(); } c.fillStyle = '#ffd84a'; circ(c, x, y, 1.6); c.fill(); c.fillStyle = '#ffffff'; }
   }
-  // start line
-  const [sx0, sy0] = level.tv(0.115, 0), [sx1, sy1] = level.tv(0.135, 1);
-  const lx = Math.min(sx0, sx1), ly = Math.min(sy0, sy1), lw = Math.abs(sx1 - sx0), lh = Math.abs(sy1 - sy0);
-  const cell = 16;
-  for (let x = 0; x < lw; x += cell) for (let y = 0; y < lh; y += cell) { c.fillStyle = ((x + y) / cell) % 2 ? 'rgba(255,255,255,.75)' : 'rgba(31,36,68,.55)'; c.fillRect(lx + x, ly + y, Math.min(cell, lw - x), Math.min(cell, lh - y)); }
+  // start pads
+  level.starts.forEach(([x, y], i) => {
+    c.save(); circ(c, x, y, 48); c.fillStyle = i ? 'rgba(47,107,255,.28)' : 'rgba(255,90,54,.28)'; c.fill();
+    c.setLineDash([10, 8]); c.lineWidth = 3; c.strokeStyle = PCOL[i]; c.stroke(); c.setLineDash([]);
+    c.fillStyle = PCOL[i]; c.globalAlpha = 0.55; c.font = `26px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(`P${i + 1}`, x, y + 66);
+    c.restore();
+  });
   // puddles
   for (const p of level.puddles) {
     c.save(); ell(c, p.x, p.y, p.rx, p.ry);
@@ -1012,7 +1030,7 @@ function renderFloor() {
 function makePlayer(i) {
   const [x, y] = level.starts[i];
   return { i, ch: CHARS[sel[i]], x, y, vx: 0, vy: 0, r: PR, pee: 100, poop: 100, urg: 0,
-    facing: level.port ? (i ? -1 : 1) : 1, phase: 0, stun: 0, spin: 0, slipCd: 0, hitCd: 0, boost: 0, bumpCd: 0,
+    facing: i ? -1 : 1, phase: 0, stun: 0, spin: 0, slipCd: 0, hitCd: 0, boost: 0, bumpCd: 0,
     out: false, accident: null, accT: 0, inside: false, enterT: 0, said1: false, said2: false, bubble: null, sweatT: 0, stinkT: 0, dustT: 0, seed: i * 2.3 };
 }
 function startRound() {
@@ -1046,7 +1064,15 @@ window.addEventListener('keydown', e => {
 });
 window.addEventListener('keyup', e => keys.delete(e.code));
 window.addEventListener('blur', () => keys.clear());
-function zoneOf(x, y) { return screenPortrait ? (y < chh / 2 ? 1 : 0) : (x < cw / 2 ? 0 : 1); }
+// each player's touch zone is their own half of the map (the side their character starts on)
+function splitAt() { return level ? (level.port ? view.ay + level.H / 2 * view.sc : view.ax + level.W / 2 * view.sc) : (screenPortrait ? chh / 2 : cw / 2); }
+function zoneOf(x, y) { const sp = splitAt(); return level && level.port ? (y < sp ? 1 : 0) : (x < sp ? 0 : 1); }
+const coarse = (() => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } })();
+function restSpot(i) {
+  const a = arenaBox();
+  if (level.port) return i ? [cw / 2, Math.max(a.y + 70, view.ay - TOPM * view.sc + 70)] : [cw / 2, Math.min(a.y + a.h - 70, view.ay + level.H * view.sc - 70)];
+  return i ? [Math.min(a.x + a.w - 70, view.ax + level.W * view.sc - 80), a.y + a.h - 76] : [Math.max(a.x + 70, view.ax + 80), a.y + a.h - 76];
+}
 function localPt(e) { const r = cvs.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
 cvs.addEventListener('pointerdown', e => {
   if (state !== 'play' && state !== 'countdown') return;
@@ -1125,7 +1151,7 @@ function updateMovers(dt) {
       }
     }
     if (!m.twin) { const vx = m.x - ox; if (Math.abs(vx) > 0.05) m.facing = vx > 0 ? 1 : -1; }
-    else { const vx = m.x - ox; if (Math.abs(vx) > 0.05) m.facing = vx > 0 ? 1 : -1; else m.facing = m.twin.facing * (level.port ? -1 : 1); }
+    else { const vx = m.x - ox; if (Math.abs(vx) > 0.05) m.facing = vx > 0 ? 1 : -1; else m.facing = m.twin.facing * (level.port ? 1 : -1); }
   }
 }
 function accident(p, type) {
@@ -1301,18 +1327,20 @@ function render() {
   const sc = view.sc, lw = 1.7 / sc;
   c.save();
   c.translate(view.ax + shx, view.ay + shy); c.scale(sc, sc);
-  c.save(); c.shadowColor = 'rgba(0,0,0,.45)'; c.shadowBlur = 24 * sc; c.shadowOffsetY = 8 * sc; c.fillStyle = th.outside; c.fillRect(0, 0, level.W, level.H); c.restore();
-  c.save(); c.beginPath(); c.rect(0, 0, level.W, level.H); c.clip();
-  if (floorCv) c.drawImage(floorCv, 0, 0, level.W, level.H);
+  c.save(); c.shadowColor = 'rgba(0,0,0,.45)'; c.shadowBlur = 24 * sc; c.shadowOffsetY = 8 * sc; c.fillStyle = th.outside; c.fillRect(0, -TOPM, level.W, level.H + TOPM); c.restore();
+  c.save(); c.beginPath(); c.rect(0, -TOPM, level.W, level.H + TOPM); c.clip();
+  if (floorCv) c.drawImage(floorCv, 0, -TOPM, level.W, level.H + TOPM);
   // decals: pee puddles
   for (const d of decals) { c.save(); ell(c, d.x, d.y, d.rx, d.ry); c.fillStyle = 'rgba(255,214,60,.7)'; c.fill(); c.strokeStyle = 'rgba(200,150,20,.6)'; c.lineWidth = lw; c.stroke(); c.restore(); }
   // goal mat
   const G = level.goal, pulse = (Math.sin(game.t * 5) + 1) / 2;
   c.save(); c.lineWidth = lw;
-  ell(c, G.x, G.y, G.r + 10 + pulse * 10, (G.r + 10 + pulse * 10) * 0.55); c.fillStyle = `rgba(56,182,255,${0.18 + pulse * 0.12})`; c.fill();
-  rr(c, G.x - 58, G.y - 24, 116, 48, 14); c.fillStyle = '#fffdf7'; c.fill(); c.strokeStyle = INK; c.stroke();
-  rr(c, G.x - 50, G.y - 17, 100, 34, 10); c.strokeStyle = '#38b6ff'; c.lineWidth = lw * 1.6; c.setLineDash([8, 6]); c.stroke(); c.setLineDash([]);
-  c.fillStyle = INK; c.font = `22px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('TOILET', G.x, G.y + 2);
+  circ(c, G.x, G.y, G.r + 6 + pulse * 10); c.fillStyle = `rgba(56,182,255,${0.16 + pulse * 0.12})`; c.fill();
+  circ(c, G.x, G.y, G.r); c.fillStyle = 'rgba(255,253,247,.9)'; c.fill(); c.strokeStyle = INK; c.stroke();
+  circ(c, G.x, G.y, G.r - 9); c.strokeStyle = '#38b6ff'; c.lineWidth = lw * 1.8; c.setLineDash([10, 7]); c.stroke(); c.setLineDash([]);
+  c.fillStyle = INK; c.font = `20px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+  if (level.port) { c.fillText('TOILET', G.x, G.y + G.r - 22); c.save(); c.translate(G.x, G.y - G.r + 22); c.rotate(Math.PI); c.fillText('TOILET', 0, 0); c.restore(); }
+  else { c.fillText('TOILET', G.x, G.y + G.r - 22); }
   c.restore();
   // bananas (flat)
   for (const b of bananas) drawBanana(c, b.x, b.y, lw);
@@ -1322,6 +1350,7 @@ function render() {
     if (o.shape === 'rect') { rr(c, o.x + 7, o.y + 7, o.w, o.h, 6); c.fill(); }
     else { ell(c, o.x + 5, o.y + 3, o.rad * 1.05, o.rad * 0.6); c.fill(); }
   }
+  { const B = level.booth; rr(c, B.x + 7, B.y + 7, B.w, B.h, 6); c.fill(); }
   for (const m of movers) { ell(c, m.x, m.y, 20, 7); c.fill(); }
   for (const p of players) if (!p.inside || p.enterT < 0.35) { ell(c, p.x, p.y, 19 * p.ch.size, 7); c.fill(); }
   c.restore();
@@ -1449,19 +1478,36 @@ function drawOverlay(c) {
   }
   if (game.winner >= 0 && game.doorT > 0.6) { const B = level.booth; const [x, y] = toScreen(B.x + B.w / 2, B.y - B.z - 4); bubbleAt(c, x, y, game.doorT < 2 ? 'Aaaahhh…' : 'OCCUPIED', PCOL[game.winner]); }
   for (const f of floats) { const [x, y] = toScreen(f.x, f.y); c.save(); c.globalAlpha = clamp(f.life / f.max * 1.5, 0, 1); outlined(c, f.text, x, y, 15, f.color, 4); c.restore(); }
-  // joysticks
+  // half-screen divider and joysticks
+  const live = state === 'play' || state === 'countdown';
+  if (live) {
+    const sp = splitAt(), a0 = arenaBox();
+    c.save(); c.setLineDash([10, 8]); c.lineWidth = 2; c.strokeStyle = state === 'countdown' ? 'rgba(255,255,255,.6)' : 'rgba(255,255,255,.22)';
+    c.beginPath(); if (level.port) { c.moveTo(a0.x, sp); c.lineTo(a0.x + a0.w, sp); } else { c.moveTo(sp, a0.y); c.lineTo(sp, a0.y + a0.h); } c.stroke(); c.restore();
+  }
   for (let i = 0; i < 2; i++) {
-    const j = joy[i]; if (!j) continue;
+    const j = joy[i];
+    if (!j) {
+      if (!live || !coarse) continue;
+      const [rx, ry] = restSpot(i);
+      c.save(); c.globalAlpha = 0.35; circ(c, rx, ry, 46); c.fillStyle = 'rgba(255,255,255,.1)'; c.fill(); c.lineWidth = 2.5; c.strokeStyle = PCOL[i]; c.stroke();
+      circ(c, rx, ry, 18); c.fillStyle = PCOL[i]; c.fill(); c.globalAlpha = 0.9; c.fillStyle = '#fff'; c.font = `11px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.translate(rx, ry); if (level.port && i) c.rotate(Math.PI); c.fillText(`P${i + 1}`, 0, 1); c.restore();
+      continue;
+    }
     c.save(); c.globalAlpha = 0.55; circ(c, j.bx, j.by, 56); c.fillStyle = 'rgba(255,255,255,.12)'; c.fill(); c.lineWidth = 3; c.strokeStyle = PCOL[i]; c.stroke();
     c.globalAlpha = 0.85; circ(c, j.x, j.y, 24); c.fillStyle = PCOL[i]; c.fill(); c.lineWidth = 2.5; c.strokeStyle = '#fff'; c.stroke(); c.restore();
   }
   const a = arenaBox(), cx = a.x + a.w / 2, cy = a.y + a.h / 2;
   // control hints during countdown
   if (state === 'countdown') {
-    c.save(); c.setLineDash([10, 8]); c.lineWidth = 2; c.strokeStyle = 'rgba(255,255,255,.55)';
-    c.beginPath(); if (screenPortrait) { c.moveTo(a.x, chh / 2); c.lineTo(a.x + a.w, chh / 2); } else { c.moveTo(cw / 2, a.y); c.lineTo(cw / 2, a.y + a.h); } c.stroke(); c.setLineDash([]);
-    const hints = screenPortrait ? [[cx, chh * 0.82, 0], [cx, chh * 0.18, 1]] : [[cw * 0.27, cy + a.h * 0.32, 0], [cw * 0.73, cy + a.h * 0.32, 1]];
-    for (const [hx, hy, pi] of hints) { const txt = `P${pi + 1}: drag on this half to steer`; c.font = `800 13px ${BODY}`; const w = c.measureText(txt).width + 20; rr(c, hx - w / 2, hy - 15, w, 30, 15); c.fillStyle = PCOL[pi]; c.fill(); c.lineWidth = 2; c.strokeStyle = INK; c.stroke(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(txt, hx, hy + 1); }
+    c.save();
+    const sp = splitAt();
+    const hints = level.port ? [[cx, (sp + a.y + a.h) / 2 + a.h * 0.12, 0], [cx, (a.y + sp) / 2 - a.h * 0.12, 1]] : [[(a.x + sp) / 2, a.y + a.h * 0.2, 0], [(sp + a.x + a.w) / 2, a.y + a.h * 0.2, 1]];
+    for (const [hx, hy, pi] of hints) {
+      const txt = coarse ? `P${pi + 1}: drag on this half` : `P${pi + 1}: ${pi ? 'arrow keys' : 'WASD'}`; c.font = `800 13px ${BODY}`; const w = c.measureText(txt).width + 20;
+      c.save(); c.translate(hx, hy); if (level.port && pi) c.rotate(Math.PI);
+      rr(c, -w / 2, -15, w, 30, 15); c.fillStyle = PCOL[pi]; c.fill(); c.lineWidth = 2; c.strokeStyle = INK; c.stroke(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(txt, 0, 1); c.restore();
+    }
     c.restore();
     const n = Math.ceil(game.cd - 0.4);
     if (n >= 1 && n <= 3) { const fr = (game.cd - 0.4) % 1, s = 1 + fr * 0.5; c.save(); c.translate(cx, cy); c.scale(s, s); outlined(c, String(n), 0, 0, Math.min(120, a.h * 0.3), '#ffffff', 10); c.restore(); }
