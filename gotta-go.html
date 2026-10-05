@@ -68,6 +68,10 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
 .stats dd i{display:block;height:100%;transition:width .25s}
 .p1 .stats dd i{background:var(--p1)} .p2 .stats dd i{background:var(--p2)}
 
+.modes{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.mode{font-weight:800;font-size:15px;border:3px solid var(--ink);border-radius:999px;background:var(--porcelain);box-shadow:0 3px 0 var(--ink);padding:8px 16px}
+.mode[aria-checked="true"]{background:var(--pee)}
+.mode:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
 .section-label{font-family:var(--display);font-size:18px;letter-spacing:.06em;margin:0;text-align:center}
 .maps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .map{min-width:0;text-align:left;border:3px solid var(--ink);border-radius:16px;background:var(--porcelain);box-shadow:0 4px 0 var(--ink);padding:8px 10px 8px 8px;display:flex;gap:10px;align-items:center}
@@ -144,6 +148,11 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
         <p class="tag">Two bladders. One toilet. Zero dignity.</p>
       </header>
 
+      <div class="modes" role="radiogroup" aria-label="Who is playing">
+        <button class="mode" role="radio" data-mode="2">Two players · one phone</button>
+        <button class="mode" role="radio" data-mode="cpu">Just me vs the computer</button>
+      </div>
+
       <div class="pickers">
         <article class="picker p1" data-p="0">
           <div class="pk-head"><span class="pchip">Player 1</span><span class="ctrl" data-ctrl="0">Left side · WASD</span></div>
@@ -159,7 +168,7 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
         </article>
         <div class="vs" aria-hidden="true">VS</div>
         <article class="picker p2" data-p="1">
-          <div class="pk-head"><span class="pchip">Player 2</span><span class="ctrl" data-ctrl="1">Right side · Arrow keys</span></div>
+          <div class="pk-head"><span class="pchip" id="p2chip">Player 2</span><span class="ctrl" data-ctrl="1">Right side · Arrow keys</span></div>
           <div class="pk-stage">
             <button class="arrow" data-dir="-1" aria-label="Previous character for player 2"><svg viewBox="0 0 20 20"><path d="M13 3 6 10l7 7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
             <canvas class="pv" width="150" height="178"></canvas>
@@ -186,6 +195,9 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
           <li><b>Share one phone.</b> The screen splits in two: your half follows your character and is also your joystick, so drag anywhere on it to steer. With the phone upright and flat between you, Player 2's half is turned to face them. On a keyboard, Player 1 uses <b>WASD</b> and Player 2 uses the <b>arrow keys</b>.</li>
           <li>You start at opposite ends of a big building. Three toilets stand along the middle, but <b>only one works</b>. The others are out of order. Find the real one first. The loser poops their pants on the spot.</li>
           <li>Lost? After a while an arrow on the edge of your view points to the working toilet.</li>
+          <li>Every toilet has a guardian. In the office a <b>boss</b> grabs you with "urgent" work, and in the mall a <b>lost tourist</b> asks for directions. Wiggle the stick (or mash keys) to break free faster. At the festival a <b>guard dog</b> barks you away, so wait for it to nap.</li>
+          <li>Grab a rare <b>golden toilet roll</b> to refill both meters and slow your urgency for 10 seconds.</li>
+          <li>No second player? Pick <b>Just me vs the computer</b>. The computer doesn't know which toilet works either.</li>
           <li>Watch the meters on your side: <span class="dot" style="background:var(--pee)"></span> <b>bladder</b> and <span class="dot" style="background:var(--poop)"></span> <b>bowels</b>. If either one empties, you have an accident and you're out.</li>
           <li>Puddles are slippery and bananas send you spinning. Janitors, roombas, goats and mall cops knock you back. Bump your rival out of the way.</li>
           <li>Pickups: <b>coffee</b> and <b>chili</b> give a burst of speed but drain your bladder or bowels. A <b>cork</b> calms both meters.</li>
@@ -253,6 +265,8 @@ const CHARS = [
     speed:0.95, mass:0.9, pee:0.88, poop:0.88, size:0.98, build:0.95, skin:'#f6d1b1', hair:'#7b4fd8', hairStyle:'pony', shirt:'#3fc4bd', pants:'#55448c', accent:'#ffffff', prop:'none', detail:'lotus', eyes:'#2f5f8a', sleeves:'short', shoes:'#f4f4f4' },
 ];
 const NPC = {
+  boss:    { skin:'#efc3a0', hair:'#8a8a8a', hairStyle:'side', shirt:'#3b4252', pants:'#2b303b', accent:'#c0392b', prop:'papers', detail:'tie', size:1.04, build:1.15, eyes:'#3a5a7a', sleeves:'long', shoes:'#1a1a1a', belt:true },
+  tourist: { skin:'#f6d6bd', hair:'#e9b44c', hairStyle:'pony', shirt:'#ff7eb6', pants:'#4dabf7', accent:'#ffffff', prop:'map', detail:'stripe', size:0.96, build:0.95, eyes:'#2f6f9a', sleeves:'short', shoes:'#ffffff' },
   janitor: { skin:'#e0b08a', hair:'#5a5a5a', hairStyle:'cap', shirt:'#7b8a99', pants:'#4a5563', accent:'#3d6fb6', prop:'mop', detail:'patch', size:1, build:1.05, eyes:'#4a3020', sleeves:'short', shoes:'#2b2b38' },
   cop:     { skin:'#f1c6a0', hair:'#333333', hairStyle:'cap', shirt:'#2d3e6b', pants:'#1f2a48', accent:'#24325a', prop:'none', detail:'badge', size:1, build:1.1, eyes:'#3a5a7a', sleeves:'long', shoes:'#111111', belt:true },
   dancerA: { skin:'#d79f73', hair:'#ff4fa3', hairStyle:'puff', shirt:'#ffe14d', pants:'#2b2b5c', accent:'#4dff9a', prop:'glow', detail:'stripe', size:0.98, build:1, eyes:'#3d2414', sleeves:'none', shoes:'#ffffff' },
@@ -341,6 +355,8 @@ const Snd = (() => {
     crunch() { hiss(0.12, 'highpass', 1500, null, 0.7, 0.25); },
     dun() { tone('sawtooth', 147, null, 0.22, 0.16); tone('sawtooth', 139, 110, 0.6, 0.16, 0.28); },
     shutter() { hiss(0.07, 'highpass', 2500, null, 0.7, 0.55); tone('square', 2000, 700, 0.05, 0.08, 0.04); },
+    woof() { tone('sawtooth', 320, 160, 0.12, 0.22); hiss(0.1, 'bandpass', 900, null, 2, 0.3); tone('sawtooth', 300, 150, 0.12, 0.2, 0.18); hiss(0.1, 'bandpass', 850, null, 2, 0.25, 0.18); },
+    papers() { hiss(0.25, 'highpass', 2500, 4000, 0.8, 0.25); hiss(0.2, 'highpass', 2200, null, 0.8, 0.2, 0.2); },
     buzzer() { tone('square', 140, 110, 0.35, 0.16); tone('square', 147, 116, 0.35, 0.1); },
     fart(len = 1.0) {
       if (!ok()) return;
@@ -674,6 +690,14 @@ function drawProp(c, prop, hx, hy, t, L) {
     limb(c, [hx + 1, hy - 3, hx + 6, -1], 2.6, '#8a5a2e', L);
     c.save(); c.lineCap = 'round'; c.lineWidth = 2.6 + 2 * L; c.strokeStyle = shade('#8a5a2e', -0.55); c.beginPath(); c.arc(hx - 1.6, hy - 3, 2.8, Math.PI, TAU); c.stroke();
     c.lineWidth = 2.6; c.strokeStyle = '#8a5a2e'; c.stroke(); c.restore();
+  } else if (prop === 'papers') {
+    for (let i = 0; i < 4; i++) { rr(c, hx - 3 + i * 0.6, hy - 9 - i * 2.2, 11, 3, 0.6); pl('#ffffff'); c.fillStyle = i % 2 ? '#ffffff' : '#f1f3f5'; c.fill(); c.stroke(); }
+    c.save(); c.fillStyle = '#e03131'; c.fillRect(hx + 4, hy - 17.5, 4, 1.2); c.restore();
+  } else if (prop === 'map') {
+    c.save(); c.translate(hx + 3, hy - 7); c.rotate(-0.15);
+    c.beginPath(); c.moveTo(-6, -6); c.lineTo(0, -4.6); c.lineTo(6, -6); c.lineTo(6, 6); c.lineTo(0, 7.4); c.lineTo(-6, 6); c.closePath(); pl('#f7f1d9'); c.fillStyle = '#f7f1d9'; c.fill(); c.stroke();
+    c.strokeStyle = '#4dabf7'; c.lineWidth = 0.9; c.beginPath(); c.moveTo(-5, 2); c.quadraticCurveTo(-1, -3, 4, 1); c.stroke();
+    c.strokeStyle = '#e03131'; c.beginPath(); c.moveTo(-3, -3); c.lineTo(2, 4); c.stroke(); c.restore();
   } else if (prop === 'mop') {
     const sw = Math.sin(t * 6) * 3;
     limb(c, [hx - 2, hy - 7, hx + 14 + sw, -3], 2.4, '#c89b62', L);
@@ -697,6 +721,48 @@ function drawGoat(c, x, y, facing, t, moving, lw) {
   c.beginPath(); c.moveTo(hx + 3, hy + 7); c.lineTo(hx + 2, hy + 13); c.lineTo(hx + 5, hy + 8); c.closePath(); fs(c, '#d8d2c4');
   c.restore();
 }
+function drawDog(c, x, y, facing, t, moving, asleep, lw) {
+  c.save(); c.translate(x, y); c.scale(1.35 * facing, 1.35); const L = lw / 1.35 * 0.75; c.lineJoin = 'round'; c.lineCap = 'round';
+  const fur = '#b5743a', dark = '#6e4321', belly = '#e9c79a';
+  if (asleep) {
+    ell(c, 0, -9, 21, 10); fillOut(c, grad(c, -20, -19, 20, 0, fur), fur, L);
+    ell(c, -16, -6, 8, 4, 0.4); fillOut(c, fur, fur, L);
+    ell(c, 15, -8, 9, 7.5); fillOut(c, grad(c, 8, -16, 24, -2, fur), fur, L);
+    ell(c, 21, -5, 5, 3.6); fillOut(c, belly, fur, L);
+    circ(c, 25, -6, 1.6); c.fillStyle = '#1a1a1a'; c.fill();
+    ell(c, 12, -13, 3.5, 6, -0.7); fillOut(c, dark, dark, L);
+    c.strokeStyle = '#1a1a1a'; c.lineWidth = L * 1.2; c.beginPath(); c.arc(17, -9, 2, 0.2, Math.PI - 0.2); c.stroke();
+    c.restore();
+    c.save(); c.fillStyle = 'rgba(255,255,255,.9)'; c.strokeStyle = INK; c.lineWidth = 2; c.font = `${16 + Math.sin(t * 2) * 2}px ${DISPLAY}`; c.textAlign = 'center';
+    for (let i = 0; i < 3; i++) { const ph = (t * 0.6 + i / 3) % 1; c.globalAlpha = 1 - ph; c.strokeText('z', x + 20 * facing + ph * 26, y - 34 - ph * 40); c.fillText('z', x + 20 * facing + ph * 26, y - 34 - ph * 40); }
+    c.restore(); return;
+  }
+  const run = moving ? Math.sin(t * 18) : 0, bob = moving ? -Math.abs(run) * 2 : 0;
+  // legs
+  for (const [lx, ph, back] of [[-12, 0, 1], [10, 1, 1], [-8, 1, 0], [14, 0, 0]]) {
+    const sw = (ph ? run : -run) * 4;
+    limb(c, [lx, -15 + bob, lx + sw * 0.4, -8, lx + sw, -1], 4.6, back ? shade(fur, -0.15) : fur, L);
+    ell(c, lx + sw + 1, -0.8, 3, 1.6); fillOut(c, dark, dark, L);
+  }
+  // tail
+  const wag = Math.sin(t * (moving ? 20 : 12)) * 0.5;
+  c.save(); c.translate(-18, -20 + bob); c.rotate(-0.9 + wag); limb(c, [0, 0, -2, -7, 0, -12], 3.2, fur, L); c.restore();
+  // body
+  ell(c, 0, -19 + bob, 20, 9.5); fillOut(c, grad(c, -20, -29, 20, -10, fur, 0.18, -0.22), fur, L);
+  ell(c, 2, -14 + bob, 13, 4); c.fillStyle = belly; c.fill();
+  // collar and head
+  const hx = 17, hy = -28 + bob + (moving ? 0 : Math.sin(t * 3) * 0.8);
+  rr(c, hx - 6, hy + 3, 7, 3.5, 1.5); fillOut(c, '#e03131', '#e03131', L);
+  ell(c, hx, hy, 8.5, 7.5); fillOut(c, grad(c, hx - 8, hy - 8, hx + 8, hy + 6, fur, 0.16, -0.18), fur, L);
+  ell(c, hx + 8, hy + 2.5, 5.2, 3.6); fillOut(c, belly, fur, L);
+  circ(c, hx + 12.6, hy + 1.4, 1.8); c.fillStyle = '#1a1a1a'; c.fill();
+  c.strokeStyle = '#1a1a1a'; c.lineWidth = L; c.beginPath(); c.moveTo(hx + 8, hy + 5); c.quadraticCurveTo(hx + 10, hy + 6.6, hx + 12.6, hy + 5); c.stroke();
+  if (moving) { c.fillStyle = '#ff7a8a'; ell(c, hx + 10.5, hy + 7, 1.6, 2.4); c.fill(); }
+  circ(c, hx + 3.5, hy - 2, 1.4); c.fillStyle = '#1a1a1a'; c.fill(); circ(c, hx + 3.1, hy - 2.4, 0.5); c.fillStyle = '#fff'; c.fill();
+  c.strokeStyle = '#3a2410'; c.lineWidth = L * 1.2; c.beginPath(); c.moveTo(hx + 1.5, hy - 5); c.lineTo(hx + 5, hy - 4.2); c.stroke();
+  c.save(); c.translate(hx - 4, hy - 4); c.rotate(-0.5 + (moving ? run * 0.2 : 0)); ell(c, 0, 4, 3.4, 6.4); fillOut(c, dark, dark, L); c.restore();
+  c.restore();
+}
 function drawRoomba(c, x, y, t, lw) {
   c.save(); c.translate(x, y); c.lineWidth = lw; c.strokeStyle = INK;
   ell(c, 0, -3, 19, 13); fs(c, '#2c303a'); ell(c, 0, -7, 19, 13); fs(c, '#4a505f');
@@ -717,7 +783,13 @@ function drawStroller(c, x, y, facing, t, lw) {
 }
 function drawPickupIcon(c, type, x, y, s, lw) {
   c.save(); c.translate(x, y); c.scale(s, s); c.lineWidth = lw / s; c.strokeStyle = INK; c.lineJoin = 'round'; c.lineCap = 'round';
-  if (type === 'coffee') {
+  if (type === 'golden') {
+    const gg = c.createLinearGradient(-11, 0, 11, 0); gg.addColorStop(0, '#b8860b'); gg.addColorStop(0.35, '#ffe680'); gg.addColorStop(0.6, '#ffd23f'); gg.addColorStop(1, '#a8740a');
+    rr(c, -11, -9, 22, 18, 4); fs(c, gg);
+    ell(c, 0, -9, 11, 4); fs(c, '#fff1b0'); ell(c, 0, -9, 4, 1.6); fs(c, '#8a6a10');
+    c.beginPath(); c.moveTo(11, 2); c.quadraticCurveTo(16, 6, 13, 13); c.lineTo(8, 11); c.quadraticCurveTo(10, 7, 9, 5); c.closePath(); fs(c, '#ffe680');
+    const tw = (game ? game.t : 0) * 4; star(c, -8 + Math.sin(tw) * 2, -14, 2.6 + Math.sin(tw * 1.3), '#ffffff');
+  } else if (type === 'coffee') {
     c.beginPath(); c.moveTo(-9, -12); c.lineTo(9, -12); c.lineTo(6.5, 12); c.lineTo(-6.5, 12); c.closePath(); fs(c, '#ffffff');
     c.beginPath(); c.moveTo(-8.2, -4); c.lineTo(8.2, -4); c.lineTo(7.3, 5); c.lineTo(-7.3, 5); c.closePath(); fs(c, '#a8693a');
     rr(c, -11, -16, 22, 5, 2); fs(c, '#3b2a22');
@@ -962,10 +1034,10 @@ let game = null, state = 'menu', score = [0, 0];
 let SC = 0.42; // world-to-screen scale, shared by both halves so characters keep one size
 const cams = [{ x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: 1 }];
 const sel = [0, 1];
-let mapId = 'office';
-const BASE_SPEED = 210, DRAIN = 2.4, CHK = 1.34, PR = 20, TOPM = 110;
+let mapId = 'office', vsCPU = false;
+const BASE_SPEED = 210, DRAIN = 2.05, CHK = 1.34, PR = 20, TOPM = 110;
 const CELL = 300, COLS = 12, ROWS = 8, WALL_T = 28, HINT_AFTER = 15, GOAL_R = 100;
-try { const s = JSON.parse(localStorage.getItem('gottago-setup') || 'null'); if (s) { if (CHARS[s.a]) sel[0] = s.a; if (CHARS[s.b]) sel[1] = s.b; if (GEN[s.m]) mapId = s.m; } } catch (e) {}
+try { const s = JSON.parse(localStorage.getItem('gottago-setup') || 'null'); if (s) { if (CHARS[s.a]) sel[0] = s.a; if (CHARS[s.b]) sel[1] = s.b; if (GEN[s.m]) mapId = s.m; if (s.cpu) vsCPU = true; } } catch (e) {}
 
 const LINES = {
   urg1: ['Hnnngh!', 'Gotta go!', 'Not now…', 'Clench!', 'Hold it…'],
@@ -980,13 +1052,15 @@ const LINES = {
 };
 
 /* ---------------------------------------------------------------- layout: one half of the screen per player */
+const PL = i => vsCPU && i === 1 ? 'CPU' : `P${i + 1}`;
 function halfOf(i) {
+  if (vsCPU) return { x: 0, y: 0, w: cw, h: chh, rot: false };
   if (screenPortrait) return i ? { x: 0, y: 0, w: cw, h: chh / 2, rot: true } : { x: 0, y: chh / 2, w: cw, h: chh / 2, rot: false };
   return i ? { x: cw / 2, y: 0, w: cw / 2, h: chh, rot: false } : { x: 0, y: 0, w: cw / 2, h: chh, rot: false };
 }
 // the meter panel sits on the outer edge of each half
-const panelRight = i => !screenPortrait && i === 1;
-function viewRect(i) { const h = halfOf(i); return { x: panelRight(i) ? 0 : side, y: 0, w: h.w - side, h: h.h }; }
+const panelRight = i => i === 1 && (vsCPU || !screenPortrait);
+function viewRect(i) { const h = halfOf(i); if (vsCPU) return { x: side, y: 0, w: cw - 2 * side, h: chh }; return { x: panelRight(i) ? 0 : side, y: 0, w: h.w - side, h: h.h }; }
 function enterHalf(c, i) { const h = halfOf(i); c.save(); if (h.rot) { c.translate(h.x + h.w, h.y + h.h); c.rotate(Math.PI); } else c.translate(h.x, h.y); return h; }
 function localToScreen(i, lx, ly) { const h = halfOf(i); return h.rot ? [h.x + h.w - lx, h.y + h.h - ly] : [h.x + lx, h.y + ly]; }
 function layout() {
@@ -998,7 +1072,7 @@ function layout() {
   const v = viewRect(0);
   SC = clamp(Math.min(v.w, v.h) / 860, 0.34, 0.85);
   const pb = $('#pauseBtn').style, mb = $('#muteBtn').style;
-  if (screenPortrait) { pb.left = '4px'; pb.top = (chh / 2 + 4) + 'px'; mb.right = '4px'; mb.left = ''; mb.top = (chh / 2 - 42) + 'px'; }
+  if (screenPortrait && !vsCPU) { pb.left = '4px'; pb.top = (chh / 2 + 4) + 'px'; mb.right = '4px'; mb.left = ''; mb.top = (chh / 2 - 42) + 'px'; }
   else { pb.left = '6px'; pb.top = '6px'; mb.right = '6px'; mb.left = ''; mb.top = '6px'; }
   buildTile();
   if (level) updateCams(0, true);
@@ -1100,6 +1174,8 @@ function genLevel(id) {
     }
   }
   movers = ms;
+  lv.guards = makeGuards(lv);
+  lv.nav = buildNav(lv);
   return lv;
 }
 function solidHit(x, y, r) {
@@ -1120,7 +1196,7 @@ function spawnPair(kind, type) {
     const list = kind === 'banana' ? bananas : pickups;
     if (list.some(b => Math.hypot(b.x - x, b.y - y) < 120)) continue;
     if (players.some(p => Math.hypot(p.x - x, p.y - y) < 110 || Math.hypot(p.x - mx, p.y - my) < 110)) continue;
-    const life = kind === 'banana' ? 1e9 : 20;
+    const life = kind === 'banana' || type === 'golden' ? 1e9 : 20;
     list.push({ x, y, type, life }, { x: mx, y: my, type, life });
     return true;
   }
@@ -1233,7 +1309,7 @@ function makePlayer(i) {
   const [x, y] = level.starts[i];
   return { i, ch: CHARS[sel[i]], x, y, vx: 0, vy: 0, r: PR, pee: 100, poop: 100, urg: 0,
     facing: i ? -1 : 1, phase: 0, stun: 0, spin: 0, slipCd: 0, hitCd: 0, boost: 0, bumpCd: 0, fakeCd: 0,
-    out: false, accident: null, accT: 0, inside: false, enterT: 0, said1: false, said2: false, bubble: null, sweatT: 0, stinkT: 0, dustT: 0, seed: i * 2.3 };
+    out: false, accident: null, accT: 0, inside: false, enterT: 0, said1: false, said2: false, bubble: null, sweatT: 0, stinkT: 0, dustT: 0, seed: i * 2.3, grab: null, guardCd: 0, calm: 0 };
 }
 function startRound() {
   Snd.init();
@@ -1246,11 +1322,13 @@ function startRound() {
   parts = []; floats = []; decals = []; pickups = []; bananas = [];
   for (let i = 0; i < 4; i++) spawnPair('banana', 'banana');
   for (let i = 0; i < 4; i++) spawnPair('pickup', pick(['coffee', 'chili', 'cork', 'cork']));
+  for (let i = 0; i < 2; i++) spawnPair('pickup', 'golden');
+  resetCPU();
   joy[0] = joy[1] = null;
   updateCams(0, true);
   state = 'countdown';
   requestWake();
-  try { localStorage.setItem('gottago-setup', JSON.stringify({ a: sel[0], b: sel[1], m: mapId })); } catch (e) {}
+  try { localStorage.setItem('gottago-setup', JSON.stringify({ a: sel[0], b: sel[1], m: mapId, cpu: vsCPU })); } catch (e) {}
 }
 let wakeLock = null;
 function requestWake() { try { if (navigator.wakeLock && !wakeLock) navigator.wakeLock.request('screen').then(l => { wakeLock = l; l.addEventListener('release', () => { wakeLock = null; }); }).catch(() => {}); } catch (e) {} }
@@ -1287,7 +1365,7 @@ window.addEventListener('keydown', e => {
 window.addEventListener('keyup', e => keys.delete(e.code));
 window.addEventListener('blur', () => keys.clear());
 // a player's half of the screen is both their view and their joystick
-function zoneOf(x, y) { return screenPortrait ? (y < chh / 2 ? 1 : 0) : (x < cw / 2 ? 0 : 1); }
+function zoneOf(x, y) { if (vsCPU) return 0; return screenPortrait ? (y < chh / 2 ? 1 : 0) : (x < cw / 2 ? 0 : 1); }
 const coarse = (() => { try { return matchMedia('(pointer: coarse)').matches; } catch (e) { return false; } })();
 function restSpot(i) { const v = viewRect(i); return localToScreen(i, v.x + v.w / 2, v.h - 72); }
 function localPt(e) { const r = cvs.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
@@ -1314,7 +1392,7 @@ function inputOf(i) {
   const j = joy[i];
   if (j) { const dx = j.x - j.bx, dy = j.y - j.by, d = Math.hypot(dx, dy); if (d < 7) return [0, 0]; const m = Math.min(1, d / 56); return [dx / d * m * flip, dy / d * m * flip]; }
   let x = 0, y = 0;
-  for (const k of keys) { const m = KEYMAP[k]; if (m && m[0] === i) { x += m[1]; y += m[2]; } }
+  for (const k of keys) { const m = KEYMAP[k]; if (m && (m[0] === i || vsCPU)) { x += m[1]; y += m[2]; } }
   const d = Math.hypot(x, y); return d ? [x / d * flip, y / d * flip] : [0, 0];
 }
 
@@ -1374,10 +1452,11 @@ function updateMovers(dt) {
 }
 function accident(p, type) {
   if (p.out || p.inside) return;
+  if (p.grab) releasePlayer(p, true);
   p.out = true; p.accident = type; p.accT = 0; p.vx *= 0.2; p.vy *= 0.2; p.bubble = null;
   const o = players[1 - p.i];
   if (o.out) { state = 'ending'; game.endT = FINALE_T; game.result = { type: 'draw' }; startFinale(p.i, 'draw'); }
-  else if (!o.inside) game.soloNote = { text: `P${o.i + 1}: just make it now!`, color: PCOL[o.i], who: o.i };
+  else if (!o.inside) game.soloNote = { text: `${PL(o.i)}: just make it now!`, color: PCOL[o.i], who: o.i };
   game.shake = Math.max(game.shake, 4);
 }
 const FINALE_T = 6.2;
@@ -1388,6 +1467,7 @@ function startFinale(who, kind, winner = -1, earlier = null) {
 }
 function win(p) {
   const B = level.real;
+  for (const q of players) if (q.grab) releasePlayer(q, true);
   p.inside = true; p.enterT = 0; p.ex = p.x; p.ey = p.y; game.winner = p.i; game.doorT = 0;
   state = 'ending'; game.endT = FINALE_T; game.soloNote = null;
   const o = players[1 - p.i];
@@ -1411,7 +1491,7 @@ function updatePlayer(p, dt) {
       if (p.accident === 'pee') { Snd.pee(); decals.push({ x: p.x + 3 * p.facing, y: p.y + 3, rx: 0, ry: 0, max: 50, kind: 'pee', born: game.t }); floatText(p.x + 46 * p.facing, p.y - 62, 'psssss…', '#ffe066'); }
       else { Snd.fart(1.4); floatText(p.x - 56 * p.facing, p.y - 70, 'PFFFRRRT!', '#d39a5c'); burst(p.x - 16 * p.facing, p.y - 50, 'stink', 7, { smin: 20, smax: 60, life: 1.4, size: 7 }); game.shake = Math.max(game.shake, 9); }
       buzz([60, 40, 160]);
-      if (!game.finale) game.banner = { text: `P${p.i + 1} ${p.accident === 'pee' ? 'PEED' : 'POOPED'} THEIR PANTS!`, color: p.accident === 'pee' ? '#ffcc2e' : '#c58a52', t: 2.4, max: 2.4 };
+      if (!game.finale) game.banner = { text: `${PL(p.i)} ${p.accident === 'pee' ? 'PEED' : 'POOPED'} THEIR PANTS!`, color: p.accident === 'pee' ? '#ffcc2e' : '#c58a52', t: 2.4, max: 2.4 };
     }
     if (at(2.1)) say(p, pick(LINES[p.accident]), 2.8);
     if (p.accT > 0.8) {
@@ -1423,8 +1503,9 @@ function updatePlayer(p, dt) {
   const playing = state === 'play';
   if (playing) {
     const ch = p.ch;
-    p.pee = Math.max(0, p.pee - DRAIN * ch.pee * dt);
-    p.poop = Math.max(0, p.poop - DRAIN * ch.poop * dt);
+    const calmK = p.calm > 0 ? 0.35 : 1; p.calm = Math.max(0, p.calm - dt);
+    p.pee = Math.max(0, p.pee - DRAIN * ch.pee * calmK * dt);
+    p.poop = Math.max(0, p.poop - DRAIN * ch.poop * calmK * dt);
     p.urg = 1 - Math.min(p.pee, p.poop) / 100;
     if (p.urg > 0.5 && !p.said1) { p.said1 = true; say(p, pick(LINES.urg1)); }
     if (p.urg > 0.8 && !p.said2) { p.said2 = true; say(p, pick(LINES.urg2)); buzz(40); }
@@ -1432,7 +1513,15 @@ function updatePlayer(p, dt) {
     if (p.poop <= 0) { accident(p, 'poop'); return; }
   }
   p.stun = Math.max(0, p.stun - dt); p.hitCd = Math.max(0, p.hitCd - dt); p.boost = Math.max(0, p.boost - dt); p.bumpCd = Math.max(0, p.bumpCd - dt); p.fakeCd = Math.max(0, p.fakeCd - dt);
-  let [ix, iy] = playing ? inputOf(p.i) : [0, 0];
+  p.guardCd = Math.max(0, p.guardCd - dt);
+  let [ix, iy] = playing ? (vsCPU && p.i === 1 ? cpuInput(p, dt) : inputOf(p.i)) : [0, 0];
+  if (p.grab) {
+    // held by a guardian: wiggle the stick to break free sooner
+    const G = p.grab, wig = Math.min(0.09, Math.hypot(ix - G.li[0], iy - G.li[1]) * 0.3);
+    G.li = [ix, iy]; G.left -= dt + wig; p.vx = p.vy = 0; p.moving = false;
+    if (G.left <= 0) releasePlayer(p);
+    return;
+  }
   if (p.stun > 0 || p.spin > 0) { ix = 0; iy = 0; }
   if (p.spin > 0) p.spin = Math.max(0, p.spin - dt);
   const low = Math.min(p.pee, p.poop) < 20 ? 0.85 : 1;
@@ -1474,6 +1563,7 @@ function updatePlayer(p, dt) {
       const pk = p.ch.perk;
       if (k.type === 'coffee') { p.boost = pk === 'coffee' ? 4.5 : 3; const cst = pk === 'coffee' ? 7 : 15; p.pee = Math.max(1, p.pee - cst); floatText(p.x, p.y - 110, `SPEED! −${cst} bladder`, '#ffcc2e'); }
       else if (k.type === 'chili') { p.boost = pk === 'chili' ? 4.5 : 3; const cst = pk === 'chili' ? 7 : 15; p.poop = Math.max(1, p.poop - cst); floatText(p.x, p.y - 110, `SPEED! −${cst} bowels`, '#ff7a45'); }
+      else if (k.type === 'golden') { p.pee = Math.min(100, p.pee + 35); p.poop = Math.min(100, p.poop + 35); p.calm = 10; floatText(p.x, p.y - 120, 'GOLDEN ROLL! Urgency slowed', '#ffd23f'); say(p, 'Ahh… inner peace.', 1.6); burst(k.x, k.y - 20, 'spark', 16, { smin: 80, smax: 220, life: 0.7, color: '#ffd23f' }); if (p.urg < 0.5) p.said1 = false; }
       else { const amt = pk === 'zen' ? 44 : 22; p.pee = Math.min(100, p.pee + amt); p.poop = Math.min(100, p.poop + amt); floatText(p.x, p.y - 110, `CALM +${amt}`, '#9ef0c7'); if (p.urg < 0.5) p.said1 = false; }
       burst(k.x, k.y - 20, 'spark', 10, { smin: 60, smax: 180, life: 0.5 });
     }
@@ -1528,6 +1618,7 @@ function update(dt) {
   game.shake = Math.max(0, game.shake - dt * 30);
   if (game.banner) { game.banner.t -= dt; if (game.banner.t <= 0) game.banner = null; }
   updateMovers(dt);
+  updateGuards(dt);
   if (state === 'countdown') {
     game.cd -= dt;
     const n = Math.ceil(game.cd - 0.4);
@@ -1551,6 +1642,199 @@ function update(dt) {
   updateCams(dt, false);
 }
 
+/* ---------------------------------------------------------------- navigation grid (used by the computer player) */
+const NAV_G = 25;
+function buildNav(lv) {
+  const cols = Math.ceil(lv.W / NAV_G), rows = Math.ceil(lv.H / NAV_G), blocked = new Uint8Array(cols * rows), m = PR + 6;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+    const x = c * NAV_G + NAV_G / 2, y = r * NAV_G + NAV_G / 2;
+    let b = x < lv.rim + m || y < lv.rim + m || x > lv.W - lv.rim - m || y > lv.H - lv.rim - m;
+    if (!b) for (const o of lv.solids) {
+      if (o.shape === 'rect') { if (x > o.x - m && x < o.x + o.w + m && y > o.y - m && y < o.y + o.h + m) { b = true; break; } }
+      else if (Math.hypot(x - o.x, y - o.y) < o.rad + m) { b = true; break; }
+    }
+    blocked[r * cols + c] = b ? 1 : 0;
+  }
+  const nav = { cols, rows, blocked };
+  // cells that count as standing on each toilet's ring
+  nav.goals = lv.booths.map(b => {
+    const out = [];
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+      const x = c * NAV_G + NAV_G / 2, y = r * NAV_G + NAV_G / 2;
+      if (!blocked[r * cols + c] && Math.hypot(x - b.gx, y - b.gy) < GOAL_R - 30) out.push(r * cols + c);
+    }
+    return out;
+  });
+  return nav;
+}
+function navCell(x, y) {
+  const N = level.nav, c = clamp(Math.floor(x / NAV_G), 0, N.cols - 1), r = clamp(Math.floor(y / NAV_G), 0, N.rows - 1);
+  let i = r * N.cols + c;
+  if (!N.blocked[i]) return i;
+  // standing right against a wall: use the closest open neighbour
+  let best = i, bd = 1e9;
+  for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++) {
+    const rr2 = r + dr, cc = c + dc; if (rr2 < 0 || cc < 0 || rr2 >= N.rows || cc >= N.cols) continue;
+    const j = rr2 * N.cols + cc; if (N.blocked[j]) continue;
+    const d = dr * dr + dc * dc; if (d < bd) { bd = d; best = j; }
+  }
+  return best;
+}
+function navBFS(start) {
+  const N = level.nav, n = N.cols * N.rows, dist = new Int32Array(n).fill(-1), prev = new Int32Array(n).fill(-1), q = new Int32Array(n);
+  let h = 0, t = 0; dist[start] = 0; q[t++] = start;
+  while (h < t) {
+    const cur = q[h++], cx = cur % N.cols, cy = (cur / N.cols) | 0;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      if (!dx && !dy) continue;
+      const nx = cx + dx, ny = cy + dy; if (nx < 0 || ny < 0 || nx >= N.cols || ny >= N.rows) continue;
+      const ni = ny * N.cols + nx; if (dist[ni] >= 0 || N.blocked[ni]) continue;
+      if (dx && dy && (N.blocked[cy * N.cols + nx] || N.blocked[ny * N.cols + cx])) continue; // no corner cutting
+      dist[ni] = dist[cur] + 1; prev[ni] = cur; q[t++] = ni;
+    }
+  }
+  return { dist, prev };
+}
+const navPos = i => [(i % level.nav.cols) * NAV_G + NAV_G / 2, ((i / level.nav.cols) | 0) * NAV_G + NAV_G / 2];
+
+/* ---------------------------------------------------------------- computer player */
+// The computer doesn't know which toilet works: it checks the nearest unchecked one and moves on when it's broken.
+let cpu = null;
+function resetCPU() { cpu = { path: null, wi: 0, repath: 0, pause: 0, nextPause: rand(6, 10), stuckT: 0, lastX: 0, lastY: 0, jig: 0, jx: 0, jy: 0, wig: 0, target: null }; }
+function cpuInput(p, dt) {
+  const A = cpu; if (!A || !level.nav) return [0, 0];
+  if (p.grab) { A.wig += dt * 11; return [Math.cos(A.wig), Math.sin(A.wig * 1.7)]; }
+  A.repath -= dt; A.nextPause -= dt;
+  if (A.pause > 0) { A.pause -= dt; return [0, 0]; }
+  if (A.nextPause <= 0) { A.nextPause = rand(7, 12); A.pause = rand(0.25, 0.6); }
+  if (A.jig > 0) { A.jig -= dt; return [A.jx, A.jy]; }
+  // stuck: wiggle sideways and plan again
+  A.stuckT += dt;
+  if (A.stuckT > 1.1) {
+    if (Math.hypot(p.x - A.lastX, p.y - A.lastY) < 26 && p.stun <= 0) { const a = rand(0, TAU); A.jig = 0.45; A.jx = Math.cos(a); A.jy = Math.sin(a); A.repath = 0; }
+    A.stuckT = 0; A.lastX = p.x; A.lastY = p.y;
+  }
+  if (A.repath <= 0 || !A.path) {
+    A.repath = 0.5;
+    const start = navCell(p.x, p.y), { dist, prev } = navBFS(start);
+    let goalCells = null, best = 1e9, bestCell = -1;
+    const real = level.booths.findIndex(b => b.revealed && b.real);
+    const candidates = level.booths.map((b, k) => k).filter(k => real >= 0 ? k === real : !(level.booths[k].revealed && !level.booths[k].real));
+    for (const k of candidates) for (const ci of level.nav.goals[k]) if (dist[ci] >= 0 && dist[ci] < best) { best = dist[ci]; bestCell = ci; goalCells = k; }
+    // short detours for calming pickups when it's getting urgent
+    if (p.urg > 0.35) for (const k of pickups) {
+      if (k.type !== 'cork' && k.type !== 'golden') continue;
+      const ci = navCell(k.x, k.y); if (dist[ci] >= 0 && dist[ci] < 9 && dist[ci] < best) { best = dist[ci]; bestCell = ci; goalCells = -1; }
+    }
+    A.target = goalCells;
+    if (bestCell < 0) { A.path = null; return [0, 0]; }
+    const path = []; for (let ci = bestCell; ci >= 0 && ci !== start; ci = prev[ci]) path.push(ci);
+    path.reverse(); A.path = path; A.wi = 0;
+  }
+  const P = A.path; if (!P || !P.length) return [0, 0];
+  // aim a few cells ahead for smoother lines
+  while (A.wi < P.length - 1) { const [wx, wy] = navPos(P[A.wi]); if (Math.hypot(wx - p.x, wy - p.y) < 34) A.wi++; else break; }
+  const [tx, ty] = navPos(P[Math.min(P.length - 1, A.wi + 1)]);
+  const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy) || 1;
+  return [dx / d * 0.9, dy / d * 0.9];
+}
+
+/* ---------------------------------------------------------------- toilet guardians */
+// Office: a boss who hands you work. Mall: a lost tourist asking directions. Festival: a guard dog.
+const GUARD_LINES = {
+  boss: ['Got a minute? I need 40 slides by 5!', 'Quick sync? Won\'t take long…', 'Per my last email…', 'Can you cover my shift tonight?'],
+  tourist: ['Excuse me! Which way is the food court?', 'Can you take our photo? Again?', 'Is this the way to the beach?', 'Where is the… uh… exit?'],
+  stuck: { boss: ['I REALLY need to go!', 'Can it wait?!', 'Email me!'], tourist: ['Left! Then just… LEFT!', 'No idea, sorry!', 'Ask HIM!'] },
+  dog: ['Nice doggy…', 'Let me in!', 'Good boy… please?', 'AAAH!'],
+};
+function makeGuards(lv) {
+  const type = lv.id === 'office' ? 'boss' : lv.id === 'mall' ? 'tourist' : 'dog';
+  return lv.booths.map(b => ({ type, b, x: b.gx + rand(-60, 60), y: b.gy + 60, vx: 0, vy: 0, r: 18, facing: 1, phase: 0, moving: false, seed: Math.random() * 10,
+    cd: 0, grab: null, bubble: null, wx: b.gx, wy: b.gy + 60, asleep: false, phaseT: rand(2, 4), ang: rand(0, Math.PI) }));
+}
+function stepGuard(gd, tx, ty, speed, dt) {
+  const dx = tx - gd.x, dy = ty - gd.y, d = Math.hypot(dx, dy);
+  if (d < 4) { gd.moving = false; return true; }
+  const s = Math.min(d, speed * dt); gd.x += dx / d * s; gd.y += dy / d * s; gd.moving = true; gd.phase += s * 0.075;
+  if (Math.abs(dx) > 2) gd.facing = dx > 0 ? 1 : -1;
+  for (const o of level.solids) { if (o.shape === 'rect') collideRect(gd, o); else collideCirc(gd, o.x, o.y, o.rad); }
+  return false;
+}
+function canBother(p) { return state === 'play' && !p.out && !p.inside && !p.grab; }
+function updateGuards(dt) {
+  if (!level.guards) return;
+  for (const gd of level.guards) {
+    const b = gd.b; gd.cd = Math.max(0, gd.cd - dt);
+    if (gd.bubble) { gd.bubble.t -= dt; if (gd.bubble.t <= 0) gd.bubble = null; }
+    if (gd.type === 'dog') {
+      gd.phaseT -= dt;
+      if (gd.phaseT <= 0) {
+        gd.asleep = !gd.asleep; gd.phaseT = gd.asleep ? rand(2.4, 3.4) : rand(4, 6);
+        if (!gd.asleep && players.some(p => Math.hypot(p.x - gd.x, p.y - gd.y) < 500)) { floatText(gd.x, gd.y - 60, 'WOOF!', '#ffffff'); Snd.woof(); }
+      }
+      if (gd.asleep) { gd.moving = false; continue; }
+      let tgt = null, td = 1e9;
+      for (const p of players) { if (!canBother(p)) continue; const d = Math.hypot(p.x - b.gx, p.y - b.gy); if (d < 250 && d < td) { td = d; tgt = p; } }
+      if (tgt) {
+        const lim = 175, dx = tgt.x - b.gx, dy = tgt.y - b.gy, d = Math.hypot(dx, dy) || 1;
+        stepGuard(gd, b.gx + dx / d * Math.min(d, lim), b.gy + dy / d * Math.min(d, lim), 255, dt);
+      } else {
+        gd.ang += dt * 0.9; stepGuard(gd, b.gx + Math.cos(gd.ang) * 120, b.gy + 35 + Math.abs(Math.sin(gd.ang)) * 40, 110, dt);
+      }
+      for (const p of players) {
+        if (!canBother(p) || p.hitCd > 0) continue;
+        const d = Math.hypot(p.x - gd.x, p.y - gd.y);
+        if (d < 44) {
+          const nx = (p.x - b.gx) / (Math.hypot(p.x - b.gx, p.y - b.gy) || 1), ny = (p.y - b.gy) / (Math.hypot(p.x - b.gx, p.y - b.gy) || 1);
+          p.vx = nx * 430; p.vy = ny * 430; p.stun = 0.55; p.hitCd = 1;
+          Snd.woof(); floatText(gd.x, gd.y - 56, 'WOOF! WOOF!', '#ffffff'); say(p, pick(GUARD_LINES.dog), 1.2); game.shake = Math.max(game.shake, 6);
+          gd.facing = p.x > gd.x ? 1 : -1;
+        }
+      }
+      continue;
+    }
+    if (gd.grab) {
+      const p = gd.grab, side2 = gd.x < p.x ? -1 : 1;
+      stepGuard(gd, p.x + side2 * 38, p.y + 2, 200, dt); gd.facing = -side2; gd.moving = false;
+      continue;
+    }
+    let tgt = null, td = 1e9;
+    if (gd.cd <= 0) for (const p of players) {
+      if (!canBother(p) || p.guardCd > 0) continue;
+      const d = Math.hypot(p.x - gd.x, p.y - gd.y);
+      if (d < 240 && Math.hypot(p.x - b.gx, p.y - b.gy) < 440 && d < td) { td = d; tgt = p; }
+    }
+    if (tgt) {
+      stepGuard(gd, tgt.x, tgt.y, 165, dt);
+      if (Math.hypot(tgt.x - gd.x, tgt.y - gd.y) < 48) grabPlayer(gd, tgt);
+    } else if (stepGuard(gd, gd.wx, gd.wy, 60, dt) || Math.random() < dt * 0.15) {
+      const a = rand(0.05, 0.95) * Math.PI; gd.wx = b.gx + Math.cos(a) * rand(90, 150); gd.wy = b.gy + 20 + Math.sin(a) * rand(30, 70);
+    }
+  }
+}
+function grabPlayer(gd, p) {
+  const dur = gd.type === 'boss' ? 3.4 : 3.0;
+  gd.grab = p; p.grab = { g: gd, left: dur, max: dur, li: [0, 0] };
+  p.vx = p.vy = 0; p.facing = gd.x > p.x ? 1 : -1;
+  gd.bubble = { text: pick(GUARD_LINES[gd.type]), t: 2.6 };
+  Snd.papers(); buzz(50);
+  setTimeout(() => { if (p.grab && p.grab.g === gd) say(p, pick(GUARD_LINES.stuck[gd.type]), 1.4); }, 900);
+}
+function releasePlayer(p, quiet) {
+  const gd = p.grab && p.grab.g; if (!gd) return;
+  gd.grab = null; gd.cd = 2.5; p.grab = null; p.guardCd = 6;
+  if (quiet) return;
+  floatText(p.x, p.y - 120, 'ESCAPED!', '#9ef0c7'); Snd.pickup();
+  if (gd.type === 'boss') burst(gd.x, gd.y - 70, 'paper', 14, { smin: 60, smax: 200, life: 1.2, g: 160, vy: -80, size: 9, color: '#ffffff' });
+  else burst(gd.x, gd.y - 70, 'confetti', 10, { smin: 60, smax: 160, life: 0.9, g: 200, size: 5 });
+}
+function drawGuard(c, gd, lw) {
+  const t = game.t + gd.seed;
+  if (gd.type === 'dog') { drawDog(c, gd.x, gd.y, gd.facing, t, gd.moving, gd.asleep, lw); return; }
+  const ch = gd.type === 'boss' ? NPC.boss : NPC.tourist;
+  drawChar(c, ch, { x: gd.x, y: gd.y, t, phase: gd.phase, moving: gd.moving, facing: gd.facing, lw, k: CHK, face: gd.grab ? 'normal' : 'normal', seed: gd.seed, cheer: false });
+}
+
 /* ---------------------------------------------------------------- render */
 function faceOf(p) {
   if (p.inside) return 'relief'; if (p.accident) return 'shame'; if (p.spin > 0) return 'panic';
@@ -1566,6 +1850,7 @@ function render() {
   const c = g; c.setTransform(dpr, 0, 0, dpr, 0, 0);
   c.fillStyle = level.th.outside; c.fillRect(0, 0, cw, chh);
   if (game.finale) { renderFinale(c); return; }
+  if (vsCPU) { renderHalf(c, 0); c.save(); drawPanel(c, 1); c.restore(); drawJoysticks(c); return; }
   renderHalf(c, 0); renderHalf(c, 1);
   // seam between the two halves
   c.save(); c.fillStyle = INK; if (screenPortrait) c.fillRect(0, chh / 2 - 2, cw, 4); else c.fillRect(cw / 2 - 2, 0, 4, chh); c.restore();
@@ -1621,14 +1906,17 @@ function drawWorld(c, v, camX, camY, S) {
   }
   c.fillStyle = 'rgba(15,20,45,.12)';
   for (const m of movers) if (near(m.x, m.y)) { ell(c, m.x, m.y, 22, 7.5); c.fill(); ell(c, m.x, m.y, 15, 5); c.fill(); }
+  for (const gd of level.guards) if (near(gd.x, gd.y)) { ell(c, gd.x, gd.y, 24, 8); c.fill(); }
   for (const p of players) if ((!p.inside || p.enterT < 0.35) && near(p.x, p.y)) { ell(c, p.x + 2, p.y, 22 * p.ch.size, 7.5); c.fill(); ell(c, p.x + 1, p.y, 14 * p.ch.size, 5); c.fill(); }
   c.restore();
+  for (const p of players) if (p.calm > 0 && !p.out && near(p.x, p.y)) { c.save(); const pu = 1 + Math.sin(game.t * 6) * 0.08; ell(c, p.x, p.y + 1, 34 * pu, 13 * pu); c.fillStyle = `rgba(255,215,60,${0.18 + 0.12 * Math.min(1, p.calm / 3)})`; c.fill(); c.restore(); }
   for (const p of players) if (!p.inside && near(p.x, p.y)) { c.save(); ell(c, p.x, p.y + 1, 25 * p.ch.size, 10); c.strokeStyle = PCOL[p.i]; c.lineWidth = lw * 2.2; c.globalAlpha = 0.9; c.stroke(); c.restore(); }
   // depth-sorted objects
   const list = [];
   for (const o of level.obs) { if (o.shape === 'rect' ? (o.x > vx1 + 20 || o.x + o.w < vx0 - 20 || o.y - o.z > vy1 + 20 || o.y + o.h < vy0 - 20) : !near(o.x, o.y)) continue; list.push([o.sortY, 0, o]); }
   for (const b of level.booths) if (near(b.gx, b.gy, 160, 60, 260)) list.push([b.sortY, 1, b]);
   for (const m of movers) if (near(m.x, m.y)) list.push([m.y, 2, m]);
+  for (const gd of level.guards) if (near(gd.x, gd.y)) list.push([gd.y, 5, gd]);
   for (const p of players) if (near(p.x, p.y)) list.push([p.y, 3, p]);
   for (const k of pickups) if (near(k.x, k.y)) list.push([k.y, 4, k]);
   list.sort((a, b) => a[0] - b[0]);
@@ -1636,13 +1924,14 @@ function drawWorld(c, v, camX, camY, S) {
     if (kind === 0) drawObstacle(c, o, th, game.t, lw);
     else if (kind === 1) drawBooth(c, o, th, lw);
     else if (kind === 2) drawMoverObj(c, o, lw);
+    else if (kind === 5) drawGuard(c, o, lw);
     else if (kind === 3) {
       if (o.inside) { if (o.enterT < 0.35) drawChar(c, o.ch, Object.assign(charOpts(o, lw), { alpha: 1 - o.enterT / 0.35, moving: true, face: 'relief' })); }
       else drawChar(c, o.ch, charOpts(o, lw));
     } else {
       const bobY = Math.sin(game.t * 4 + o.x) * 4, fade = o.life < 2 ? (Math.sin(game.t * 20) > 0 ? 1 : 0.35) : 1;
       c.save(); c.globalAlpha = fade; ell(c, o.x, o.y, 15, 5); c.fillStyle = 'rgba(0,0,0,.18)'; c.fill();
-      ell(c, o.x, o.y - 26 + bobY, 20, 20); c.fillStyle = o.type === 'cork' ? 'rgba(158,240,199,.35)' : 'rgba(255,220,80,.35)'; c.fill();
+      ell(c, o.x, o.y - 26 + bobY, o.type === 'golden' ? 26 + Math.sin(game.t * 5) * 3 : 20, o.type === 'golden' ? 26 + Math.sin(game.t * 5) * 3 : 20); c.fillStyle = o.type === 'golden' ? 'rgba(255,215,60,.45)' : o.type === 'cork' ? 'rgba(158,240,199,.35)' : 'rgba(255,220,80,.35)'; c.fill();
       drawPickupIcon(c, o.type, o.x, o.y - 26 + bobY, 1.25, lw); c.restore();
     }
   }
@@ -1658,6 +1947,7 @@ function drawWorld(c, v, camX, camY, S) {
     if (q.type === 'dust' || q.type === 'splash') { c.globalAlpha = a * 0.6; circ(c, q.x, q.y, q.size * (1.6 - a * 0.6)); c.fillStyle = q.color; c.fill(); }
     else if (q.type === 'stink') { c.globalAlpha = a * 0.32; circ(c, q.x + Math.sin(q.life * 6) * 4, q.y, q.size * (1.8 - a)); c.fillStyle = '#8fd14f'; c.fill(); }
     else if (q.type === 'sweat' || q.type === 'drop') { c.globalAlpha = Math.min(1, a * 2); c.fillStyle = q.color; c.beginPath(); c.moveTo(q.x, q.y - q.size * 1.8); c.quadraticCurveTo(q.x + q.size, q.y, q.x, q.y + q.size); c.quadraticCurveTo(q.x - q.size, q.y, q.x, q.y - q.size * 1.8); c.fill(); }
+    else if (q.type === 'paper') { c.globalAlpha = Math.min(1, a * 2); c.translate(q.x, q.y); c.rotate(q.rot); c.fillStyle = '#ffffff'; c.fillRect(-q.size / 2, -q.size * 0.65, q.size, q.size * 1.3); c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 0.8; c.strokeRect(-q.size / 2, -q.size * 0.65, q.size, q.size * 1.3); c.fillStyle = 'rgba(0,0,0,.25)'; for (let l = 0; l < 3; l++) c.fillRect(-q.size / 2 + 1.5, -q.size * 0.4 + l * 3, q.size - 3, 0.8); }
     else if (q.type === 'confetti') { c.globalAlpha = Math.min(1, a * 2); c.translate(q.x, q.y); c.rotate(q.rot); c.fillStyle = q.color; c.fillRect(-q.size / 2, -q.size / 4, q.size, q.size / 2); }
     else if (q.type === 'spark') { c.globalAlpha = a; c.strokeStyle = q.color; c.lineWidth = lw * 1.4; c.beginPath(); c.moveTo(q.x, q.y); c.lineTo(q.x - q.vx * 0.06, q.y - q.vy * 0.06); c.stroke(); }
     c.restore();
@@ -1692,14 +1982,14 @@ function renderFinale(c) {
   if (F.t > 0.25) {
     const a = clamp((F.t - 0.25) / 0.3, 0, 1);
     c.save(); c.globalAlpha = a;
-    const top = F.kind === 'win' ? `P${F.winner + 1} ${players[F.winner].ch.name} made it to the toilet` : 'Nobody made it';
+    const top = F.kind === 'win' ? `${PL(F.winner)} ${players[F.winner].ch.name} made it to the toilet` : 'Nobody made it';
     outlined(c, top, midX, bar + 24, Math.min(20, (cw - F.cardW) / (top.length * 0.62)), F.kind === 'win' ? PCOL[F.winner] : '#ffffff', 5);
     c.restore();
   }
   if (F.t > 1.0) {
     const a = clamp((F.t - 1.0) / 0.25, 0, 1), pop = F.t < 1.35 ? easeOutBack(a) : 1;
     const verb = (F.earlier || p.accident) === 'pee' ? 'PEED' : 'POOPED';
-    const txt = `P${F.who + 1} ${F.earlier ? 'ALREADY ' : ''}${verb} THEIR PANTS!`;
+    const txt = `${PL(F.who)} ${F.earlier ? 'ALREADY ' : ''}${verb} THEIR PANTS!`;
     const px = Math.min(44, (cw - F.cardW) / (txt.length * 0.6));
     c.save(); c.translate(midX, bar + 30 + px * 1.1); c.scale(pop, pop); c.rotate(-0.03);
     outlined(c, txt, 0, 0, px, verb === 'PEED' ? '#ffd23f' : '#c98a4b', Math.max(5, px * 0.2)); c.restore();
@@ -1733,7 +2023,7 @@ function drawPanel(c, i) {
   drawChar(c, p.ch, { x: x0 + w / 2 - (panelRight(i) ? -2 : 2), y: avTop + 30 + 92 * 0.78 * (p.ch.size || 1), t: game.t, facing: panelRight(i) ? -1 : 1, urg: p.urg, face: faceOf(p), lw: 1.3, k: 0.78, accident: p.accident, accT: p.accT, seed: p.seed, moving: false, tint: p.pee < p.poop ? '#ff3b3b' : '#6cbf2f', tintA: p.out ? 0 : clamp((p.urg - 0.5) * 0.9, 0, 0.45) });
   c.restore();
   c.font = `${sp ? 13 : 15}px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = PCOL[i];
-  c.lineWidth = 3; c.strokeStyle = INK; c.lineJoin = 'round'; c.strokeText(`P${i + 1}`, x0 + w / 2, avTop + 74); c.fillText(`P${i + 1}`, x0 + w / 2, avTop + 74);
+  c.lineWidth = 3; c.strokeStyle = INK; c.lineJoin = 'round'; c.strokeText(PL(i), x0 + w / 2, avTop + 74); c.fillText(PL(i), x0 + w / 2, avTop + 74);
   c.font = `600 11px ${BODY}`; c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(`${score[i]} win${score[i] === 1 ? '' : 's'}`, x0 + w / 2, avTop + 90);
   const top = avTop + 126, bot = hh - 12, bh = Math.max(30, bot - top), gap = sp ? 5 : 7, bw = (w - 4 - gap * 3) / 2;
   [[p.pee, 'pee'], [p.poop, 'poop']].forEach(([val, kind], k) => {
@@ -1781,9 +2071,18 @@ function drawHalfOverlay(c, i, v, cam, S = SC) {
     if (!onView(x, y, 60)) continue;
     if (game.finale) { if (p.bubble && p.i === game.finale.who) { const [bx, by] = toL(p.x + 30 * p.facing, p.y - CHAR_H * CHK * p.ch.size * 0.72); bubbleAt(c, bx + (p.facing > 0 ? 70 : -70), by, p.bubble.text, PCOL[p.i], v); } }
     else if (p.bubble) bubbleAt(c, x, y - 2, p.bubble.text, PCOL[p.i], v);
-    else { c.save(); c.font = `12px ${DISPLAY}`; rr(c, x - 13, y - 16, 26, 16, 6); c.fillStyle = PCOL[p.i]; c.fill(); c.lineWidth = 1.6; c.strokeStyle = INK; c.stroke(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(`P${p.i + 1}`, x, y - 7); c.restore(); }
+    else { c.save(); c.font = `12px ${DISPLAY}`; const tw2 = PL(p.i).length > 2 ? 34 : 26; rr(c, x - tw2 / 2, y - 16, tw2, 16, 6); c.fillStyle = PCOL[p.i]; c.fill(); c.lineWidth = 1.6; c.strokeStyle = INK; c.stroke(); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(PL(p.i), x, y - 7); c.restore(); }
+    if (p.grab && !game.finale) {
+      const G = p.grab, k = clamp(G.left / G.max, 0, 1), bw = 74, by2 = y + 8;
+      c.save(); rr(c, x - bw / 2, by2, bw, 9, 4.5); c.fillStyle = 'rgba(0,0,0,.45)'; c.fill(); rr(c, x - bw / 2, by2, bw * k, 9, 4.5); c.fillStyle = '#ff6b6b'; c.fill(); rr(c, x - bw / 2, by2, bw, 9, 4.5); c.lineWidth = 1.6; c.strokeStyle = INK; c.stroke(); c.restore();
+      if (!(vsCPU && p.i === 1)) { c.save(); c.translate(x, by2 + 24 + Math.sin(game.t * 18) * 1.5); outlined(c, coarse ? 'WIGGLE TO ESCAPE!' : 'MASH KEYS TO ESCAPE!', 0, 0, 14, '#ffd23f', 4); c.restore(); }
+    }
     if (p.boost > 0 && !p.out) { const [bx, by] = toL(p.x, p.y); c.save(); c.strokeStyle = 'rgba(255,220,80,.8)'; c.lineWidth = 2; for (let k = 0; k < 3; k++) { const yy = by - (20 + k * 14) * S * CHK; c.beginPath(); c.moveTo(bx - p.facing * 18 * S, yy); c.lineTo(bx - p.facing * (34 + Math.random() * 14) * S, yy); c.stroke(); } c.restore(); }
     if (p.spin > 0) { c.save(); for (let k = 0; k < 3; k++) { const a = game.t * 8 + k * TAU / 3; star(c, x + Math.cos(a) * 16, y + 16 + Math.sin(a) * 5, 4.5, '#ffd84a'); } c.restore(); }
+  }
+  if (!game.finale) for (const gd of level.guards) {
+    if (!gd.bubble) continue;
+    const [gx, gy] = toL(gd.x, gd.y - (CHAR_H + 10) * CHK), lift = gd.grab && gd.grab.bubble ? 32 : 0; if (onView(gx, gy, 60)) bubbleAt(c, gx, gy - lift, gd.bubble.text, '#2a3150', v);
   }
   if (game.winner >= 0 && game.doorT > 0.6) { const B = level.real; const [x, y] = toL(B.gx, B.y - B.z - 4); if (onView(x, y, 40)) bubbleAt(c, x, y, game.doorT < 2 ? 'Aaaahhh…' : 'OCCUPIED', PCOL[game.winner], v); }
   for (const f of floats) { const [x, y] = toL(f.x, f.y); if (!onView(x, y, 80)) continue; c.save(); c.globalAlpha = clamp(f.life / f.max * 1.5, 0, 1); outlined(c, f.text, x, y, 15, f.color, 4); c.restore(); }
@@ -1802,9 +2101,9 @@ function drawHalfOverlay(c, i, v, cam, S = SC) {
       c.restore();
     }
   }
-  if (state === 'play' && me.out && me.accT > 3.6 && !players[1 - i].out) pill(c, cx, v.y + 26, `You're out. Watching P${2 - i} try to make it…`, '#2a3150');
+  if (state === 'play' && me.out && me.accT > 3.6 && !players[1 - i].out) pill(c, cx, v.y + 26, `You're out. Watching ${PL(1 - i)} try to make it…`, '#2a3150');
   if (state === 'countdown') {
-    pill(c, cx, v.y + v.h * 0.2, coarse ? 'Drag anywhere on your half to steer' : (i ? 'Arrow keys to steer' : 'WASD to steer'), PCOL[i]);
+    pill(c, cx, v.y + v.h * 0.2, vsCPU ? (coarse ? 'Drag anywhere to steer' : 'WASD or arrow keys to steer') : coarse ? 'Drag anywhere on your half to steer' : (i ? 'Arrow keys to steer' : 'WASD to steer'), PCOL[i]);
     pill(c, cx, v.y + v.h * 0.2 + 38, 'Find the toilet that works!', '#2a3150');
     const n = Math.ceil(game.cd - 0.4);
     if (n >= 1 && n <= 3) { const fr = (game.cd - 0.4) % 1, s = 1 + fr * 0.5; c.save(); c.translate(cx, cy + 20); c.scale(s, s); outlined(c, String(n), 0, 0, Math.min(110, v.h * 0.28), '#ffffff', 10); c.restore(); }
@@ -1819,13 +2118,13 @@ function drawHalfOverlay(c, i, v, cam, S = SC) {
 }
 function drawJoysticks(c) {
   const live = state === 'play' || state === 'countdown';
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < (vsCPU ? 1 : 2); i++) {
     const j = joy[i];
     if (!j) {
       if (!live || !coarse) continue;
       const [rx, ry] = restSpot(i);
       c.save(); c.globalAlpha = 0.35; circ(c, rx, ry, 46); c.fillStyle = 'rgba(255,255,255,.1)'; c.fill(); c.lineWidth = 2.5; c.strokeStyle = PCOL[i]; c.stroke();
-      circ(c, rx, ry, 18); c.fillStyle = PCOL[i]; c.fill(); c.globalAlpha = 0.9; c.fillStyle = '#fff'; c.font = `11px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.translate(rx, ry); if (halfOf(i).rot) c.rotate(Math.PI); c.fillText(`P${i + 1}`, 0, 1); c.restore();
+      circ(c, rx, ry, 18); c.fillStyle = PCOL[i]; c.fill(); c.globalAlpha = 0.9; c.fillStyle = '#fff'; c.font = `11px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.translate(rx, ry); if (halfOf(i).rot) c.rotate(Math.PI); c.fillText(PL(i), 0, 1); c.restore();
       continue;
     }
     c.save(); c.globalAlpha = 0.55; circ(c, j.bx, j.by, 56); c.fillStyle = 'rgba(255,255,255,.12)'; c.fill(); c.lineWidth = 3; c.strokeStyle = PCOL[i]; c.stroke();
@@ -1836,7 +2135,7 @@ function drawJoysticks(c) {
 /* ---------------------------------------------------------------- results / screens */
 function showResult() {
   const r = game.result, el = $('#result');
-  const nm = i => `P${i + 1} ${players[i].ch.name}`;
+  const nm = i => `${PL(i)} ${players[i].ch.name}`;
   const t = $('#resTitle'), s = $('#resSub'), q = $('#resQuip');
   if (r.type === 'win') {
     t.textContent = `${nm(r.w)} made it!`; t.style.color = PCOL[r.w];
@@ -1902,14 +2201,22 @@ for (const id of Object.keys(THEMES)) {
 }
 function syncMaps() { mapsEl.querySelectorAll('.map').forEach(b => b.setAttribute('aria-checked', String(b.dataset.map === mapId))); }
 syncMaps();
+function syncMode() {
+  document.querySelectorAll('.mode').forEach(b => b.setAttribute('aria-checked', String((b.dataset.mode === 'cpu') === vsCPU)));
+  $('#p2chip').textContent = vsCPU ? 'Computer' : 'Player 2';
+  syncCtrlLabels(); updateMenuScore();
+}
+document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => { const v2 = b.dataset.mode === 'cpu'; if (v2 !== vsCPU) score = [0, 0]; vsCPU = v2; syncMode(); }));
 function syncCtrlLabels() {
   const touch = matchMedia('(pointer: coarse)').matches;
+  if (vsCPU) { document.querySelector('[data-ctrl="0"]').textContent = touch ? 'Drag anywhere to steer' : 'WASD or arrow keys'; document.querySelector('[data-ctrl="1"]').textContent = 'Played by the computer'; return; }
   const port = window.innerHeight > window.innerWidth;
   const where = port ? ['Bottom half', 'Top half'] : ['Left half', 'Right half'];
   document.querySelector('[data-ctrl="0"]').textContent = touch ? `Drag on the ${where[0].toLowerCase()}` : `${where[0]} · WASD`;
   document.querySelector('[data-ctrl="1"]').textContent = touch ? `Drag on the ${where[1].toLowerCase()}` : `${where[1]} · Arrow keys`;
 }
-syncCtrlLabels(); window.addEventListener('resize', syncCtrlLabels);
+window.addEventListener('resize', syncCtrlLabels);
+syncMode();
 const previewT = [0, 0];
 function drawPreviews(dt) {
   pvs.forEach((cv, i) => {
