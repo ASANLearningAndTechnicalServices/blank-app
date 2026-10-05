@@ -72,6 +72,19 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
 .mode{font-weight:800;font-size:15px;border:3px solid var(--ink);border-radius:999px;background:var(--porcelain);box-shadow:0 3px 0 var(--ink);padding:8px 16px}
 .mode[aria-checked="true"]{background:var(--pee)}
 .mode:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+.stack{display:flex;flex-direction:column;gap:10px}
+.note{margin:0;text-align:center;font-size:14px;font-weight:700;color:var(--ink-soft)}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.lvl{min-width:0;text-align:left;border:3px solid var(--ink);border-radius:16px;background:var(--porcelain);box-shadow:0 4px 0 var(--ink);padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.lvl[aria-checked="true"]{background:#fff3c4;box-shadow:0 4px 0 var(--ink),inset 0 0 0 3px var(--pee)}
+.lvl:disabled{opacity:.5;cursor:not-allowed}
+.lvl b{font-family:var(--display);font-weight:400;font-size:16px;letter-spacing:.03em;text-transform:uppercase}
+.lvl small{font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+.lvl .st{font-size:16px;letter-spacing:2px;color:#e8a600}
+.lvl .st i{font-style:normal;color:#c9c2b3}
+.big:disabled{opacity:.6;cursor:not-allowed}
+.locked .pv{opacity:.95}
+@media (max-width:640px){ .levels{grid-template-columns:repeat(2,1fr)} }
 .section-label{font-family:var(--display);font-size:18px;letter-spacing:.06em;margin:0;text-align:center}
 .maps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .map{min-width:0;text-align:left;border:3px solid var(--ink);border-radius:16px;background:var(--porcelain);box-shadow:0 4px 0 var(--ink);padding:8px 10px 8px 8px;display:flex;gap:10px;align-items:center}
@@ -149,8 +162,9 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
       </header>
 
       <div class="modes" role="radiogroup" aria-label="Who is playing">
-        <button class="mode" role="radio" data-mode="2">Two players · one phone</button>
-        <button class="mode" role="radio" data-mode="cpu">Just me vs the computer</button>
+        <button class="mode" role="radio" data-mode="2p">Two players · one phone</button>
+        <button class="mode" role="radio" data-mode="cpu">Me vs the computer</button>
+        <button class="mode" role="radio" data-mode="career">Career</button>
       </div>
 
       <div class="pickers">
@@ -166,7 +180,7 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
           <p class="perk"></p>
           <dl class="stats"></dl>
         </article>
-        <div class="vs" aria-hidden="true">VS</div>
+        <div class="vs" id="vsMark" aria-hidden="true">VS</div>
         <article class="picker p2" data-p="1">
           <div class="pk-head"><span class="pchip" id="p2chip">Player 2</span><span class="ctrl" data-ctrl="1">Right side · Arrow keys</span></div>
           <div class="pk-stage">
@@ -181,8 +195,16 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
         </article>
       </div>
 
-      <p class="section-label">Pick a place to panic</p>
-      <div class="maps" role="radiogroup" aria-label="Map"></div>
+      <div id="mapBox" class="stack">
+        <p class="section-label">Pick a place to panic</p>
+        <div class="maps" role="radiogroup" aria-label="Map"></div>
+        <p class="note">Matches are first to 3 wins. The map changes every round.</p>
+      </div>
+      <div id="careerBox" class="stack" hidden>
+        <p class="section-label">Career · <span id="starCount"></span></p>
+        <div class="levels" role="radiogroup" aria-label="Level"></div>
+        <p class="note" id="unlockNote"></p>
+      </div>
 
       <div class="startrow">
         <button class="big" id="startBtn">Start the race</button>
@@ -197,7 +219,9 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
           <li>Lost? After a while an arrow on the edge of your view points to the working toilet.</li>
           <li>Every toilet has a guardian. In the office a <b>boss</b> grabs you with "urgent" work, and in the mall a <b>lost tourist</b> asks for directions. Wiggle the stick (or mash keys) to break free faster. At the festival a <b>guard dog</b> barks you away, so wait for it to nap.</li>
           <li>Grab a rare <b>golden toilet roll</b> to refill both meters and slow your urgency for 10 seconds.</li>
-          <li>No second player? Pick <b>Just me vs the computer</b>. The computer doesn't know which toilet works either.</li>
+          <li>Each player's <b>restroom key</b> hangs on a giant keychain somewhere in their half of the building. The working toilet stays locked until you bring yours.</li>
+          <li>No second player? Pick <b>Me vs the computer</b>. The computer has to search for its key and the right toilet too.</li>
+          <li><b>Career:</b> beat the computer on 9 levels that get bigger and harder. Earn up to 3 stars per level by finishing with calm meters. Stars unlock new characters.</li>
           <li>Watch the meters on your side: <span class="dot" style="background:var(--pee)"></span> <b>bladder</b> and <span class="dot" style="background:var(--poop)"></span> <b>bowels</b>. If either one empties, you have an accident and you're out.</li>
           <li>Puddles are slippery and bananas send you spinning. Janitors, roombas, goats and mall cops knock you back. Bump your rival out of the way.</li>
           <li>Pickups: <b>coffee</b> and <b>chili</b> give a burst of speed but drain your bladder or bowels. A <b>cork</b> calms both meters.</li>
@@ -228,6 +252,7 @@ button:focus-visible{outline:3px solid var(--flush);outline-offset:3px}
       <div class="score" id="resScore"></div>
       <div class="btnrow">
         <button class="big" id="againBtn">Rematch</button>
+        <button class="ghost" id="retryBtn" hidden>Retry</button>
         <button class="ghost" id="charsBtn">Change characters</button>
       </div>
     </div>
@@ -261,6 +286,10 @@ const CHARS = [
     speed:1.17, mass:0.7, pee:1.25, poop:1.12, size:0.86, build:0.9, skin:'#ffd7b5', hair:'#e0702a', hairStyle:'cap', shirt:'#2fb36b', pants:'#3a5bd9', accent:'#ffcf3a', prop:'none', detail:'stripe', eyes:'#3a6b3a', sleeves:'short', shoes:'#f4f4f4' },
   { id:'brenda', name:'Big Brenda', tag:'Protein shake regret. Shoves everyone aside.', perk:'heavy', perkText:'Heaviest. Bumps knock rivals dizzy',
     speed:0.97, mass:1.75, pee:0.95, poop:1.2, size:1.06, build:1.25, skin:'#8b5a3a', hair:'#24150e', hairStyle:'puff', shirt:'#e5408e', pants:'#26262e', accent:'#ffffff', prop:'shake', detail:'tank', eyes:'#2a1a10', sleeves:'none', shoes:'#ff4fa3' },
+  { id:'mo', name:'Marathon Mo', tag:'Trained for this. Literally.', perk:'escape', perkText:'Breaks free from grabs twice as fast', unlock: 6,
+    speed:1.1, mass:0.85, pee:0.95, poop:1.0, size:1.0, build:0.92, skin:'#a86f48', hair:'#151010', hairStyle:'cap', shirt:'#c6f432', pants:'#202a44', accent:'#202a44', prop:'none', detail:'stripe', eyes:'#3d2414', sleeves:'none', shoes:'#ff5a36' },
+  { id:'rita', name:'Royal Rita', tag:'One does not queue for the loo.', perk:'royal', perkText:'Guardians bow and let her through', unlock: 15,
+    speed:0.96, mass:1.0, pee:1.0, poop:1.0, size:1.0, build:1.0, skin:'#f3d2b8', hair:'#d8b25a', hairStyle:'bun', shirt:'#7b2cbf', pants:'#4a1a7a', accent:'#ffd23f', prop:'none', detail:'buttons', eyes:'#2f5f8a', sleeves:'long', shoes:'#ffd23f', crown:true },
   { id:'zoe', name:'Zen Zoe', tag:'Breathes through the cramps. Mostly.', perk:'zen', perkText:'Corks calm her twice as much',
     speed:0.95, mass:0.9, pee:0.88, poop:0.88, size:0.98, build:0.95, skin:'#f6d1b1', hair:'#7b4fd8', hairStyle:'pony', shirt:'#3fc4bd', pants:'#55448c', accent:'#ffffff', prop:'none', detail:'lotus', eyes:'#2f5f8a', sleeves:'short', shoes:'#f4f4f4' },
 ];
@@ -312,6 +341,70 @@ const GEN = {
   },
 };
 
+/* ---------------------------------------------------------------- career, matches and the restroom key */
+// Career: nine levels against the computer. Mazes grow, the computer speeds up, meters drain faster.
+const CAREER = [
+  { map: 'office', cols: 10, rows: 7, key: false, drain: 1.0, cpu: 0.76, name: 'First day' },
+  { map: 'mall', cols: 10, rows: 7, key: false, drain: 1.0, cpu: 0.8, name: 'Window shopping' },
+  { map: 'fest', cols: 12, rows: 8, key: false, drain: 1.05, cpu: 0.83, name: 'Mud season' },
+  { map: 'office', cols: 12, rows: 8, key: true, drain: 1.05, cpu: 0.85, name: 'Who took the key?' },
+  { map: 'mall', cols: 14, rows: 8, key: true, drain: 1.1, cpu: 0.88, name: 'Black Friday' },
+  { map: 'fest', cols: 14, rows: 9, key: true, drain: 1.12, cpu: 0.9, name: 'Headliner' },
+  { map: 'office', cols: 14, rows: 9, key: true, drain: 1.16, cpu: 0.93, name: 'Quarter end' },
+  { map: 'mall', cols: 16, rows: 10, key: true, drain: 1.2, cpu: 0.96, name: 'Holiday rush' },
+  { map: 'fest', cols: 16, rows: 10, key: true, drain: 1.24, cpu: 1.0, name: 'Final encore' },
+];
+const MATCH_TO = 3, MAP_ORDER = ['office', 'mall', 'fest'];
+let mode = '2p', careerLevel = 0, career = { stars: CAREER.map(() => 0), best: CAREER.map(() => 0) };
+try { const c2 = JSON.parse(localStorage.getItem('gottago-career') || 'null'); if (c2 && Array.isArray(c2.stars)) career = { stars: CAREER.map((_, i) => c2.stars[i] || 0), best: CAREER.map((_, i) => (c2.best || [])[i] || 0) }; } catch (e) {}
+const saveCareer = () => { try { localStorage.setItem('gottago-career', JSON.stringify(career)); } catch (e) {} };
+const totalStars = () => career.stars.reduce((a, b) => a + b, 0);
+const levelOpen = i => i === 0 || career.stars[i - 1] > 0;
+const charLocked = ch => (ch.unlock || 0) > totalStars();
+function roundConfig() {
+  if (mode === 'career') { const L = CAREER[careerLevel]; return { map: L.map, cols: L.cols, rows: L.rows, key: L.key, drain: L.drain, cpu: L.cpu }; }
+  return { map: mapId, cols: 14, rows: 9, key: true, drain: 1, cpu: 0.9 };
+}
+// one restroom key per player, hidden far from their start in their own half (mirrored, so it's fair)
+function placeKeys(lv, startRow) {
+  const HC = COLS / 2;
+  const saved = level; level = lv; const { dist } = navBFS(navCell(lv.starts[0][0], lv.starts[0][1])); level = saved;
+  const spots = [];
+  for (let r = 0; r < ROWS; r++) for (let c = 0; c < HC; c++) {
+    for (let tries = 0; tries < 4; tries++) {
+      const x = c * CELL + CELL / 2 + rand(-80, 80), y = r * CELL + CELL / 2 + rand(-80, 80);
+      const ci = Math.floor(y / NAV_G) * lv.nav.cols + Math.floor(x / NAV_G);
+      if (lv.nav.blocked[ci] || dist[ci] < 0) continue;
+      if (lv.booths.some(b => Math.hypot(x - b.gx, y - b.gy) < 420)) continue;
+      spots.push({ x, y, d: dist[ci] }); break;
+    }
+  }
+  spots.sort((a, b) => b.d - a.d);
+  const s = spots[Math.floor(Math.random() * Math.max(1, Math.ceil(spots.length * 0.35)))] || { x: lv.starts[0][0] + 200, y: lv.starts[0][1] };
+  return [{ x: s.x, y: s.y, owner: 0, taken: false }, { x: lv.W - s.x, y: s.y, owner: 1, taken: false }];
+}
+function drawKey(c, k, lw) {
+  const bob = Math.sin(game.t * 3 + k.x) * 4, x = k.x, y = k.y - 30 + bob;
+  c.save(); ell(c, k.x, k.y, 18, 6); c.fillStyle = 'rgba(0,0,0,.2)'; c.fill();
+  const pu = 1 + Math.sin(game.t * 5) * 0.08; ell(c, x, y - 20, 42 * pu, 42 * pu); c.fillStyle = k.owner ? 'rgba(47,107,255,.25)' : 'rgba(255,90,54,.25)'; c.fill();
+  c.translate(x, y); c.scale(1.5, 1.5); c.rotate(Math.sin(game.t * 2 + k.x) * 0.25); c.lineJoin = 'round'; c.strokeStyle = 'rgba(24,28,50,.8)'; c.lineWidth = lw / 1.5;
+  // brass key
+  circ(c, 0, -6, 6); fs(c, grad(c, -6, -12, 6, 0, '#e8b84a', 0.25, -0.2)); circ(c, 0, -6, 2.4); c.fillStyle = 'rgba(30,20,0,.6)'; c.fill();
+  rr(c, -1.6, -1, 3.2, 16, 1); fs(c, '#d9a63a'); rr(c, 1, 9, 4, 2.2, 0.6); fs(c, '#d9a63a'); rr(c, 1, 12.4, 3, 2.2, 0.6); fs(c, '#d9a63a');
+  // giant gas-station keychain paddle
+  c.beginPath(); c.moveTo(0, -12); c.lineTo(0, -16); c.stroke();
+  rr(c, -9, -50, 18, 36, 6); fs(c, grad(c, -9, -50, 9, -14, '#a8743f', 0.15, -0.2));
+  c.fillStyle = PCOL[k.owner]; c.fillRect(-9, -46, 18, 4);
+  c.fillStyle = '#fff6dd'; c.font = `11px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('W', 0, -34); c.fillText('C', 0, -24);
+  c.restore();
+}
+function keyIcon(c, x, y, s, got) {
+  c.save(); c.translate(x, y); c.scale(s, s); c.lineWidth = 1.6 / s; c.strokeStyle = got ? '#5a3f0a' : 'rgba(255,255,255,.45)';
+  circ(c, -4, 0, 4); c.fillStyle = got ? '#ffd23f' : 'rgba(255,255,255,.08)'; c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(0, 0); c.lineTo(9, 0); c.moveTo(6, 0); c.lineTo(6, 3); c.moveTo(9, 0); c.lineTo(9, 3); c.stroke();
+  c.restore();
+}
+
 /* ---------------------------------------------------------------- audio */
 const Snd = (() => {
   let ac = null, master = null, noise = null, muted = false;
@@ -357,6 +450,7 @@ const Snd = (() => {
     shutter() { hiss(0.07, 'highpass', 2500, null, 0.7, 0.55); tone('square', 2000, 700, 0.05, 0.08, 0.04); },
     woof() { tone('sawtooth', 320, 160, 0.12, 0.22); hiss(0.1, 'bandpass', 900, null, 2, 0.3); tone('sawtooth', 300, 150, 0.12, 0.2, 0.18); hiss(0.1, 'bandpass', 850, null, 2, 0.25, 0.18); },
     papers() { hiss(0.25, 'highpass', 2500, 4000, 0.8, 0.25); hiss(0.2, 'highpass', 2200, null, 0.8, 0.2, 0.2); },
+    jingle() { [880, 1175, 1568].forEach((f, i) => tone('triangle', f, null, 0.12, 0.12, i * 0.07)); },
     buzzer() { tone('square', 140, 110, 0.35, 0.16); tone('square', 147, 116, 0.35, 0.1); },
     fart(len = 1.0) {
       if (!ok()) return;
@@ -601,6 +695,11 @@ function drawChar(c, ch, o) {
   } else if (hs === 'puff') {
     hair(() => { c.beginPath(); c.moveTo(hcx - 9.8, hcy - 2); c.bezierCurveTo(hcx - 8, hcy - 13.5, hcx + 8, hcy - 14, hcx + 10.6, hcy - 5.6); c.bezierCurveTo(hcx + 5, hcy - 9.6, hcx - 3, hcy - 9, hcx - 9.8, hcy - 2); c.closePath(); });
     if (ch.detail === 'tank') { c.save(); c.beginPath(); c.ellipse(hcx, hcy - 7, 10.8, 3, -0.1, Math.PI * 0.95, Math.PI * 2.05); c.lineWidth = 2.6; c.strokeStyle = ch.accent; c.stroke(); c.restore(); }
+  }
+  if (ch.crown) {
+    c.beginPath(); c.moveTo(hcx - 7, hcy - 10.5); c.lineTo(hcx - 8.5, hcy - 20); c.lineTo(hcx - 4, hcy - 15); c.lineTo(hcx, hcy - 22); c.lineTo(hcx + 4, hcy - 15); c.lineTo(hcx + 8.5, hcy - 20); c.lineTo(hcx + 7, hcy - 10.5); c.closePath();
+    fillOut(c, grad(c, hcx - 8, hcy - 22, hcx + 8, hcy - 10, '#ffd23f', 0.35, -0.25), '#c9a227', L);
+    for (const [gx2, col] of [[-4, '#e03131'], [0, '#3d8bfd'], [4, '#2fb36b']]) { circ(c, hcx + gx2, hcy - 12.6, 1.1); c.fillStyle = col; c.fill(); }
   }
   drawFace(c, o.face || 'normal', hcx, hcy, t + (o.seed || 0), L, ch, A, o.accident);
   if (hs === 'bald') {
@@ -987,7 +1086,8 @@ function drawBooth(c, b, th, lw) {
     rr(c, x, y - z, w, h, 5); fs(c, grad(c, x, y - z, x + w, y - z + h, th.boothBody, 0.12, -0.08));
   }
   const dx = x + w * 0.24, dw = w * 0.52, dy = y + h - z + 22, dh = z - 24;
-  const open = b.real && b.revealed ? 1 - (won ? clamp((game.doorT - 0.3) / 0.25, 0, 1) : 0) : 0;
+  const locked = level.needKey && game.winner < 0;
+  const open = b.real && b.revealed && !locked ? 1 - (won ? clamp((game.doorT - 0.3) / 0.25, 0, 1) : 0) : 0;
   rr(c, dx, dy, dw, dh, 4); fs(c, '#262a38');
   if (open > 0) {
     const ow = dw * lerp(1, 0.35, open);
@@ -1000,6 +1100,12 @@ function drawBooth(c, b, th, lw) {
   } else {
     rr(c, dx, dy, dw, dh, 4); fs(c, th.door);
     circ(c, dx + dw * 0.82, dy + dh * 0.55, 3); fs(c, '#ffd23f');
+    if (b.real && b.revealed && locked) {
+      const lx = dx + dw * 0.5, ly = dy + dh * 0.55;
+      c.save(); c.lineWidth = 3.4; c.strokeStyle = '#8a8f9c'; c.beginPath(); c.arc(lx, ly - 6, 7, Math.PI, TAU); c.stroke(); c.restore();
+      rr(c, lx - 10, ly - 6, 20, 16, 3); fs(c, grad(c, lx - 10, ly - 6, lx + 10, ly + 10, '#ffcc33', 0.25, -0.25));
+      circ(c, lx, ly + 1, 2.2); c.fillStyle = '#5a3f0a'; c.fill(); c.fillRect(lx - 1, ly + 1, 2, 5);
+    }
     if (b.revealed && !b.real) {
       // out of order: hazard tape and a sign
       c.save(); rr(c, dx, dy, dw, dh, 4); c.clip();
@@ -1021,7 +1127,7 @@ function drawBooth(c, b, th, lw) {
     rr(c, x + w / 2 - 22, y + h - z + 2, 44, 18, 4); fs(c, '#ffffff');
     c.save(); c.fillStyle = INK; c.font = `16px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('WC', x + w / 2, y + h - z + 12); c.restore();
   }
-  const light = !b.revealed ? '#9aa3b5' : !b.real ? '#ff3b3b' : open > 0 ? '#3ddc84' : '#ff3b3b';
+  const light = !b.revealed ? '#9aa3b5' : !b.real ? '#ff3b3b' : open > 0 ? '#3ddc84' : locked ? '#ffb020' : '#ff3b3b';
   rr(c, dx + dw / 2 - 12, dy - 9, 24, 7, 3); fs(c, light);
   c.restore();
 }
@@ -1034,10 +1140,11 @@ let game = null, state = 'menu', score = [0, 0];
 let SC = 0.42; // world-to-screen scale, shared by both halves so characters keep one size
 const cams = [{ x: 0, y: 0, z: 1 }, { x: 0, y: 0, z: 1 }];
 const sel = [0, 1];
-let mapId = 'office', vsCPU = false;
-const BASE_SPEED = 210, DRAIN = 2.05, CHK = 1.34, PR = 20, TOPM = 110;
-const CELL = 300, COLS = 12, ROWS = 8, WALL_T = 28, HINT_AFTER = 15, GOAL_R = 100;
-try { const s = JSON.parse(localStorage.getItem('gottago-setup') || 'null'); if (s) { if (CHARS[s.a]) sel[0] = s.a; if (CHARS[s.b]) sel[1] = s.b; if (GEN[s.m]) mapId = s.m; if (s.cpu) vsCPU = true; } } catch (e) {}
+let mapId = 'office', vsCPU = false, setupMode = null, setupLvl = 0;
+const BASE_SPEED = 210, DRAIN = 1.2, CHK = 1.34, PR = 20, TOPM = 110;
+const CELL = 300, WALL_T = 28, HINT_AFTER = 15, GOAL_R = 100;
+let COLS = 14, ROWS = 9, curMap = null, matchRound = 0, cpuCharIdx = 1;
+try { const s = JSON.parse(localStorage.getItem('gottago-setup') || 'null'); if (s) { if (CHARS[s.a]) sel[0] = s.a; if (CHARS[s.b]) sel[1] = s.b; if (GEN[s.m]) mapId = s.m; if (s.cpu) vsCPU = true; if (s.mode) setupMode = s.mode; if (s.lvl >= 0) setupLvl = s.lvl; } } catch (e) {}
 
 const LINES = {
   urg1: ['Hnnngh!', 'Gotta go!', 'Not now…', 'Clench!', 'Hold it…'],
@@ -1046,6 +1153,8 @@ const LINES = {
   slip: ['Whoa!', 'Banana!!', 'Wheee—'],
   pee: ['Oops…', 'Warm…', 'Nobody saw that.', 'It was a water bottle.'],
   poop: ['Oh no.', 'Code brown…', "That's… unfortunate.", 'I need new pants.'],
+  locked: ['Locked?! Where is the key?', 'I need the KEY!', 'Who locks a toilet?!'],
+  gotKey: ['Yes! The key!', 'Key acquired!', 'Mine, all mine!'],
   fake: ['Out of order?!', 'Nooo, not this one!', 'Locked?! Seriously?', 'WHY?!'],
   found: ['THERE IT IS!', 'I see it!', 'Toilet spotted!'],
   quip: ['Somebody open a window.', "That's going in the group chat.", 'Laundry day came early.', 'Nobody sit next to them on the bus.', 'Clean-up on aisle you.'],
@@ -1081,7 +1190,7 @@ let resizeQueued = false;
 window.addEventListener('resize', () => { if (resizeQueued) return; resizeQueued = true; requestAnimationFrame(() => { resizeQueued = false; layout(); }); });
 
 /* ---------------------------------------------------------------- level generation */
-function genLevel(id) {
+function genLevel(id, cfg = {}) {
   const th = THEMES[id], gen = GEN[id];
   const W = COLS * CELL, H = ROWS * CELL, HC = COLS / 2, MID = W / 2;
   const lv = { id, th, W, H, rim: 16, solids: [], obs: [], puddles: [], booths: [] };
@@ -1105,9 +1214,10 @@ function genLevel(id) {
     if (r < ROWS - 1 && south[r][c] && Math.random() < 0.34) south[r][c] = false;
   }
   // three toilet rooms on the middle line, one per band of rows
-  const boothRows = [pick([1, 2]), pick([3, 4]), pick([5, 6])];
+  const band = (ROWS - 2) / 3, boothRows = [0, 1, 2].map(k => 1 + Math.min(ROWS - 3, Math.floor(k * band + Math.random() * band)));
+  for (let k = 1; k < 3; k++) while (boothRows.slice(0, k).includes(boothRows[k])) boothRows[k] = boothRows[k] < ROWS - 2 ? boothRows[k] + 1 : 1;
   const realIdx = (Math.random() * 3) | 0;
-  const startRow = pick([1, 2, 3, 4, 5, 6]);
+  const startRow = 1 + ((Math.random() * (ROWS - 2)) | 0);
   lv.starts = [[150, startRow * CELL + 160], [W - 150, startRow * CELL + 160]];
   const addSolid = (o, both = true) => {
     lv.solids.push(o); lv.obs.push(o);
@@ -1176,6 +1286,8 @@ function genLevel(id) {
   movers = ms;
   lv.guards = makeGuards(lv);
   lv.nav = buildNav(lv);
+  lv.needKey = !!cfg.key;
+  if (lv.needKey) lv.keys = placeKeys(lv);
   return lv;
 }
 function solidHit(x, y, r) {
@@ -1206,7 +1318,7 @@ function spawnPair(kind, type) {
 /* ---------------------------------------------------------------- floor */
 let tile = null, tileSize = 160, tileFor = '';
 function buildTile() {
-  const th = THEMES[mapId], id = mapId;
+  const id = curMap || mapId, th = THEMES[id];
   tileSize = id === 'office' ? 320 : 400;
   const s = tileSize, k = SC * dpr, key = id + k.toFixed(3);
   if (tileFor === key) return; tileFor = key;
@@ -1307,17 +1419,21 @@ function drawFloor(c, vx0, vy0, vx1, vy1, lw) {
 /* ---------------------------------------------------------------- round */
 function makePlayer(i) {
   const [x, y] = level.starts[i];
-  return { i, ch: CHARS[sel[i]], x, y, vx: 0, vy: 0, r: PR, pee: 100, poop: 100, urg: 0,
+  return { i, ch: mode === 'career' && i === 1 ? CHARS[cpuCharIdx] : CHARS[sel[i]], x, y, vx: 0, vy: 0, r: PR, pee: 100, poop: 100, urg: 0,
     facing: i ? -1 : 1, phase: 0, stun: 0, spin: 0, slipCd: 0, hitCd: 0, boost: 0, bumpCd: 0, fakeCd: 0,
-    out: false, accident: null, accT: 0, inside: false, enterT: 0, said1: false, said2: false, bubble: null, sweatT: 0, stinkT: 0, dustT: 0, seed: i * 2.3, grab: null, guardCd: 0, calm: 0 };
+    out: false, accident: null, accT: 0, inside: false, enterT: 0, said1: false, said2: false, bubble: null, sweatT: 0, stinkT: 0, dustT: 0, seed: i * 2.3, grab: null, guardCd: 0, calm: 0, hasKey: false, keyT: 0 };
 }
 function startRound() {
   Snd.init();
   $('#menu').hidden = true; $('#result').hidden = true; $('#pause').hidden = true;
   $('#pauseBtn').hidden = false; $('#muteBtn').hidden = false;
+  const cfg = roundConfig();
+  if (mode !== 'career') cfg.map = MAP_ORDER[(MAP_ORDER.indexOf(mapId) + matchRound) % MAP_ORDER.length];
+  COLS = cfg.cols; ROWS = cfg.rows; curMap = cfg.map;
+  if (mode === 'career') { const pool = CHARS.map((c2, k) => k).filter(k => k !== sel[0] && !charLocked(CHARS[k])); cpuCharIdx = pool[(careerLevel * 2 + 1) % pool.length]; }
   layout();
-  level = genLevel(mapId);
-  game = { t: 0, cd: 3.4, lastBeep: 4, playT: 0, endT: 0, result: null, doorT: 0, winner: -1, spawnT: 1.5, banT: 9, banner: null, shake: 0, soloNote: null, found: false };
+  level = genLevel(cfg.map, cfg);
+  game = { cfg, drainK: cfg.drain, t: 0, cd: 3.4, lastBeep: 4, playT: 0, endT: 0, result: null, doorT: 0, winner: -1, spawnT: 1.5, banT: 9, banner: null, shake: 0, soloNote: null, found: false };
   players = [makePlayer(0), makePlayer(1)];
   parts = []; floats = []; decals = []; pickups = []; bananas = [];
   for (let i = 0; i < 4; i++) spawnPair('banana', 'banana');
@@ -1328,7 +1444,7 @@ function startRound() {
   updateCams(0, true);
   state = 'countdown';
   requestWake();
-  try { localStorage.setItem('gottago-setup', JSON.stringify({ a: sel[0], b: sel[1], m: mapId, cpu: vsCPU })); } catch (e) {}
+  try { localStorage.setItem('gottago-setup', JSON.stringify({ a: sel[0], b: sel[1], m: mapId, mode, lvl: careerLevel })); } catch (e) {}
 }
 let wakeLock = null;
 function requestWake() { try { if (navigator.wakeLock && !wakeLock) navigator.wakeLock.request('screen').then(l => { wakeLock = l; l.addEventListener('release', () => { wakeLock = null; }); }).catch(() => {}); } catch (e) {} }
@@ -1504,8 +1620,8 @@ function updatePlayer(p, dt) {
   if (playing) {
     const ch = p.ch;
     const calmK = p.calm > 0 ? 0.35 : 1; p.calm = Math.max(0, p.calm - dt);
-    p.pee = Math.max(0, p.pee - DRAIN * ch.pee * calmK * dt);
-    p.poop = Math.max(0, p.poop - DRAIN * ch.poop * calmK * dt);
+    p.pee = Math.max(0, p.pee - DRAIN * game.drainK * ch.pee * calmK * dt);
+    p.poop = Math.max(0, p.poop - DRAIN * game.drainK * ch.poop * calmK * dt);
     p.urg = 1 - Math.min(p.pee, p.poop) / 100;
     if (p.urg > 0.5 && !p.said1) { p.said1 = true; say(p, pick(LINES.urg1)); }
     if (p.urg > 0.8 && !p.said2) { p.said2 = true; say(p, pick(LINES.urg2)); buzz(40); }
@@ -1518,7 +1634,7 @@ function updatePlayer(p, dt) {
   if (p.grab) {
     // held by a guardian: wiggle the stick to break free sooner
     const G = p.grab, wig = Math.min(0.09, Math.hypot(ix - G.li[0], iy - G.li[1]) * 0.3);
-    G.li = [ix, iy]; G.left -= dt + wig; p.vx = p.vy = 0; p.moving = false;
+    G.li = [ix, iy]; G.left -= (dt + wig) * (p.ch.perk === 'escape' ? 2 : 1); p.vx = p.vy = 0; p.moving = false;
     if (G.left <= 0) releasePlayer(p);
     return;
   }
@@ -1568,6 +1684,13 @@ function updatePlayer(p, dt) {
       burst(k.x, k.y - 20, 'spark', 10, { smin: 60, smax: 180, life: 0.5 });
     }
   }
+  // restroom key
+  if (level.needKey && !p.hasKey) for (const k of level.keys) {
+    if (k.owner !== p.i || k.taken || Math.hypot(k.x - p.x, k.y - p.y) > 42) continue;
+    k.taken = true; p.hasKey = true; p.keyT = game.playT;
+    floatText(p.x, p.y - 124, 'GOT THE KEY!', '#ffd23f'); say(p, pick(LINES.gotKey), 1.5); Snd.pickup(); Snd.jingle();
+    burst(k.x, k.y - 40, 'spark', 14, { smin: 80, smax: 200, life: 0.6, color: '#ffd23f' });
+  }
   // movers
   for (const m of movers) {
     if (Math.abs(m.x - p.x) > 80 || Math.abs(m.y - p.y) > 80) continue;
@@ -1585,7 +1708,11 @@ function updatePlayer(p, dt) {
       if (b.real) { say(p, pick(LINES.found), 1.6); Snd.pickup(); }
     }
     if (d < GOAL_R) {
-      if (b.real) { win(p); return; }
+      if (b.real) {
+        if (!level.needKey || p.hasKey) { win(p); return; }
+        if (p.fakeCd <= 0) { p.fakeCd = 2.5; say(p, pick(LINES.locked), 1.8); Snd.buzzer(); floatText(b.gx, b.y - b.z - 10, 'LOCKED! FIND YOUR KEY', '#ffd23f'); }
+        continue;
+      }
       if (p.fakeCd <= 0) { p.fakeCd = 2.5; say(p, pick(LINES.fake), 1.8); Snd.buzzer(); floatText(b.gx, b.y - b.z - 10, 'OUT OF ORDER', '#ff5a5a'); }
     }
   }
@@ -1700,7 +1827,7 @@ const navPos = i => [(i % level.nav.cols) * NAV_G + NAV_G / 2, ((i / level.nav.c
 /* ---------------------------------------------------------------- computer player */
 // The computer doesn't know which toilet works: it checks the nearest unchecked one and moves on when it's broken.
 let cpu = null;
-function resetCPU() { cpu = { path: null, wi: 0, repath: 0, pause: 0, nextPause: rand(6, 10), stuckT: 0, lastX: 0, lastY: 0, jig: 0, jx: 0, jy: 0, wig: 0, target: null }; }
+function resetCPU() { cpu = { visited: new Set(), keySeen: false, path: null, wi: 0, repath: 0, pause: 0, nextPause: rand(6, 10), stuckT: 0, stuck: 0, lastX: 0, lastY: 0, jig: 0, jx: 0, jy: 0, wig: 0, target: null }; }
 function cpuInput(p, dt) {
   const A = cpu; if (!A || !level.nav) return [0, 0];
   if (p.grab) { A.wig += dt * 11; return [Math.cos(A.wig), Math.sin(A.wig * 1.7)]; }
@@ -1711,15 +1838,32 @@ function cpuInput(p, dt) {
   // stuck: wiggle sideways and plan again
   A.stuckT += dt;
   if (A.stuckT > 1.1) {
-    if (Math.hypot(p.x - A.lastX, p.y - A.lastY) < 26 && p.stun <= 0) { const a = rand(0, TAU); A.jig = 0.45; A.jx = Math.cos(a); A.jy = Math.sin(a); A.repath = 0; }
+    if (Math.hypot(p.x - A.lastX, p.y - A.lastY) < 26 && p.stun <= 0) {
+      const a = rand(0, TAU); A.jig = 0.45; A.jx = Math.cos(a); A.jy = Math.sin(a); A.repath = 0;
+      if (++A.stuck >= 3) { A.stuck = 0; if (A.goalRoom) { A.visited.add(A.goalRoom); A.goalRoom = null; } }
+    } else A.stuck = 0;
     A.stuckT = 0; A.lastX = p.x; A.lastY = p.y;
   }
+  const room = Math.floor(p.x / CELL) + ',' + Math.floor(p.y / CELL);
+  if (!A.visited.has(room)) { A.visited.add(room); if (level.needKey && !p.hasKey && !A.keySeen) A.repath = 0; }
+  if (level.needKey && !p.hasKey && !A.keySeen && (Math.hypot(level.keys[p.i].x - p.x, level.keys[p.i].y - p.y) < 420 || game.playT > 20)) { A.keySeen = true; A.repath = 0; }
+  // same hint timing as the arrow a human player gets
+  const toiletHint = game.playT > (level.needKey ? Math.max(HINT_AFTER, p.keyT + 12) : HINT_AFTER) && (!level.needKey || p.hasKey);
   if (A.repath <= 0 || !A.path) {
     A.repath = 0.5;
     const start = navCell(p.x, p.y), { dist, prev } = navBFS(start);
     let goalCells = null, best = 1e9, bestCell = -1;
-    const real = level.booths.findIndex(b => b.revealed && b.real);
-    const candidates = level.booths.map((b, k) => k).filter(k => real >= 0 ? k === real : !(level.booths[k].revealed && !level.booths[k].real));
+    const real = toiletHint ? level.booths.indexOf(level.real) : level.booths.findIndex(b => b.revealed && b.real);
+    const candidates = level.needKey && !p.hasKey ? [] : level.booths.map((b, k) => k).filter(k => real >= 0 ? k === real : !(level.booths[k].revealed && !level.booths[k].real));
+    if (level.needKey && !p.hasKey) {
+      const k = level.keys[p.i];
+      if (A.keySeen) { const ci = navCell(k.x, k.y); if (dist[ci] >= 0) { best = dist[ci]; bestCell = ci; } }
+      else for (let r = 0; r < ROWS; r++) for (let c2 = COLS / 2; c2 < COLS; c2++) {
+        if (A.visited.has(c2 + ',' + r)) continue;
+        const ci = navCell(c2 * CELL + CELL / 2, r * CELL + CELL / 2); if (dist[ci] >= 0 && dist[ci] < best) { best = dist[ci]; bestCell = ci; A.goalRoom = c2 + ',' + r; }
+      }
+      goalCells = -2;
+    }
     for (const k of candidates) for (const ci of level.nav.goals[k]) if (dist[ci] >= 0 && dist[ci] < best) { best = dist[ci]; bestCell = ci; goalCells = k; }
     // short detours for calming pickups when it's getting urgent
     if (p.urg > 0.35) for (const k of pickups) {
@@ -1731,12 +1875,17 @@ function cpuInput(p, dt) {
     const path = []; for (let ci = bestCell; ci >= 0 && ci !== start; ci = prev[ci]) path.push(ci);
     path.reverse(); A.path = path; A.wi = 0;
   }
-  const P = A.path; if (!P || !P.length) return [0, 0];
+  const P = A.path;
+  if (A.goalRoom && (!P || !P.length || Math.hypot(navPos(P[P.length - 1])[0] - p.x, navPos(P[P.length - 1])[1] - p.y) < 45)) { A.visited.add(A.goalRoom); A.goalRoom = null; A.repath = 0; }
+  if (!P || !P.length) return [0, 0];
+  // a guard dog by the toilet it's heading for: wait for the nap instead of charging in
+  if (A.target >= 0 && level.guards) { const gd = level.guards[A.target]; if (gd && gd.type === 'dog' && !gd.asleep && Math.hypot(p.x - gd.b.gx, p.y - gd.b.gy) < 330 && Math.hypot(p.x - gd.b.gx, p.y - gd.b.gy) > 200) return [0, 0]; }
   // aim a few cells ahead for smoother lines
   while (A.wi < P.length - 1) { const [wx, wy] = navPos(P[A.wi]); if (Math.hypot(wx - p.x, wy - p.y) < 34) A.wi++; else break; }
   const [tx, ty] = navPos(P[Math.min(P.length - 1, A.wi + 1)]);
   const dx = tx - p.x, dy = ty - p.y, d = Math.hypot(dx, dy) || 1;
-  return [dx / d * 0.9, dy / d * 0.9];
+  const sk = game.cfg ? game.cfg.cpu : 0.9;
+  return [dx / d * sk, dy / d * sk];
 }
 
 /* ---------------------------------------------------------------- toilet guardians */
@@ -1760,7 +1909,7 @@ function stepGuard(gd, tx, ty, speed, dt) {
   for (const o of level.solids) { if (o.shape === 'rect') collideRect(gd, o); else collideCirc(gd, o.x, o.y, o.rad); }
   return false;
 }
-function canBother(p) { return state === 'play' && !p.out && !p.inside && !p.grab; }
+function canBother(p) { return state === 'play' && !p.out && !p.inside && !p.grab && p.ch.perk !== 'royal'; }
 function updateGuards(dt) {
   if (!level.guards) return;
   for (const gd of level.guards) {
@@ -1917,6 +2066,7 @@ function drawWorld(c, v, camX, camY, S) {
   for (const b of level.booths) if (near(b.gx, b.gy, 160, 60, 260)) list.push([b.sortY, 1, b]);
   for (const m of movers) if (near(m.x, m.y)) list.push([m.y, 2, m]);
   for (const gd of level.guards) if (near(gd.x, gd.y)) list.push([gd.y, 5, gd]);
+  if (level.keys) for (const k of level.keys) if (!k.taken && near(k.x, k.y)) list.push([k.y, 6, k]);
   for (const p of players) if (near(p.x, p.y)) list.push([p.y, 3, p]);
   for (const k of pickups) if (near(k.x, k.y)) list.push([k.y, 4, k]);
   list.sort((a, b) => a[0] - b[0]);
@@ -1925,6 +2075,7 @@ function drawWorld(c, v, camX, camY, S) {
     else if (kind === 1) drawBooth(c, o, th, lw);
     else if (kind === 2) drawMoverObj(c, o, lw);
     else if (kind === 5) drawGuard(c, o, lw);
+    else if (kind === 6) drawKey(c, o, lw);
     else if (kind === 3) {
       if (o.inside) { if (o.enterT < 0.35) drawChar(c, o.ch, Object.assign(charOpts(o, lw), { alpha: 1 - o.enterT / 0.35, moving: true, face: 'relief' })); }
       else drawChar(c, o.ch, charOpts(o, lw));
@@ -2024,8 +2175,9 @@ function drawPanel(c, i) {
   c.restore();
   c.font = `${sp ? 13 : 15}px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = PCOL[i];
   c.lineWidth = 3; c.strokeStyle = INK; c.lineJoin = 'round'; c.strokeText(PL(i), x0 + w / 2, avTop + 74); c.fillText(PL(i), x0 + w / 2, avTop + 74);
-  c.font = `600 11px ${BODY}`; c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(`${score[i]} win${score[i] === 1 ? '' : 's'}`, x0 + w / 2, avTop + 90);
-  const top = avTop + 126, bot = hh - 12, bh = Math.max(30, bot - top), gap = sp ? 5 : 7, bw = (w - 4 - gap * 3) / 2;
+  c.font = `600 11px ${BODY}`; c.fillStyle = 'rgba(255,255,255,.75)'; c.fillText(mode === 'career' ? (i ? 'Rival' : `Level ${careerLevel + 1}`) : `${score[i]} win${score[i] === 1 ? '' : 's'}`, x0 + w / 2, avTop + 90);
+  if (level.needKey) keyIcon(c, x0 + w / 2 + (panelRight(i) ? 2 : -2), avTop + 108, sp ? 1.1 : 1.3, p.hasKey);
+  const top = avTop + (level.needKey ? 142 : 126), bot = hh - 12, bh = Math.max(30, bot - top), gap = sp ? 5 : 7, bw = (w - 4 - gap * 3) / 2;
   [[p.pee, 'pee'], [p.poop, 'poop']].forEach(([val, kind], k) => {
     const bx = x0 + (panelRight(i) ? 4 : 0) + gap + k * (bw + gap);
     const lowV = val < 25 && !p.out, jit = lowV && !reduceMotion ? Math.sin(game.t * 40 + k) * 1.2 : 0;
@@ -2088,23 +2240,25 @@ function drawHalfOverlay(c, i, v, cam, S = SC) {
   for (const f of floats) { const [x, y] = toL(f.x, f.y); if (!onView(x, y, 80)) continue; c.save(); c.globalAlpha = clamp(f.life / f.max * 1.5, 0, 1); outlined(c, f.text, x, y, 15, f.color, 4); c.restore(); }
   const me = players[i], cx = v.x + v.w / 2, cy = v.y + v.h / 2;
   // after a while, point toward the working toilet
-  if (state === 'play' && !me.out && game.playT > HINT_AFTER) {
-    const B = level.real, [gx, gy] = toL(B.gx, B.gy - 40);
+  const wantKey = level.needKey && !me.hasKey, myKey = level.keys && level.keys[i];
+  const hintDue = wantKey ? game.playT > 20 : game.playT > (level.needKey ? Math.max(HINT_AFTER, me.keyT + 12) : HINT_AFTER);
+  if (state === 'play' && !me.out && hintDue) {
+    const tx0 = wantKey ? myKey.x : level.real.gx, ty0 = wantKey ? myKey.y - 40 : level.real.gy - 40, [gx, gy] = toL(tx0, ty0);
     if (!onView(gx, gy, -30)) {
       const ang = Math.atan2(gy - cy, gx - cx), rx = v.w / 2 - 34, ry = v.h / 2 - 34;
       const s = Math.min(Math.abs(rx / (Math.cos(ang) || 1e-6)), Math.abs(ry / (Math.sin(ang) || 1e-6)));
       const ax = cx + Math.cos(ang) * s, ay = cy + Math.sin(ang) * s, bob = Math.sin(game.t * 6) * 3;
       c.save(); c.translate(ax + Math.cos(ang) * bob, ay + Math.sin(ang) * bob);
-      c.save(); c.rotate(ang); c.beginPath(); c.moveTo(30, 0); c.lineTo(14, -12); c.lineTo(14, 12); c.closePath(); c.fillStyle = '#38b6ff'; c.fill(); c.lineWidth = 2; c.strokeStyle = INK; c.stroke(); c.restore();
+      c.save(); c.rotate(ang); c.beginPath(); c.moveTo(30, 0); c.lineTo(14, -12); c.lineTo(14, 12); c.closePath(); c.fillStyle = wantKey ? '#ffd23f' : '#38b6ff'; c.fill(); c.lineWidth = 2; c.strokeStyle = INK; c.stroke(); c.restore();
       circ(c, 0, 0, 17); c.fillStyle = '#ffffff'; c.fill(); c.lineWidth = 2; c.strokeStyle = INK; c.stroke();
-      c.fillStyle = INK; c.font = `12px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('WC', 0, 1);
+      c.fillStyle = INK; c.font = `12px ${DISPLAY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(wantKey ? 'KEY' : 'WC', 0, 1);
       c.restore();
     }
   }
   if (state === 'play' && me.out && me.accT > 3.6 && !players[1 - i].out) pill(c, cx, v.y + 26, `You're out. Watching ${PL(1 - i)} try to make it…`, '#2a3150');
   if (state === 'countdown') {
     pill(c, cx, v.y + v.h * 0.2, vsCPU ? (coarse ? 'Drag anywhere to steer' : 'WASD or arrow keys to steer') : coarse ? 'Drag anywhere on your half to steer' : (i ? 'Arrow keys to steer' : 'WASD to steer'), PCOL[i]);
-    pill(c, cx, v.y + v.h * 0.2 + 38, 'Find the toilet that works!', '#2a3150');
+    pill(c, cx, v.y + v.h * 0.2 + 38, level.needKey ? 'Find your key, then the toilet that works!' : 'Find the toilet that works!', '#2a3150');
     const n = Math.ceil(game.cd - 0.4);
     if (n >= 1 && n <= 3) { const fr = (game.cd - 0.4) % 1, s = 1 + fr * 0.5; c.save(); c.translate(cx, cy + 20); c.scale(s, s); outlined(c, String(n), 0, 0, Math.min(110, v.h * 0.28), '#ffffff', 10); c.restore(); }
   }
@@ -2133,37 +2287,71 @@ function drawJoysticks(c) {
 }
 
 /* ---------------------------------------------------------------- results / screens */
+let resultAction = null, retryAction = null;
 function showResult() {
   const r = game.result, el = $('#result');
   const nm = i => `${PL(i)} ${players[i].ch.name}`;
-  const t = $('#resTitle'), s = $('#resSub'), q = $('#resQuip');
+  const t = $('#resTitle'), s2 = $('#resSub'), q = $('#resQuip'), sc = $('#resScore'), again = $('#againBtn'), retry = $('#retryBtn'), chars = $('#charsBtn');
   if (r.type === 'win') {
     t.textContent = `${nm(r.w)} made it!`; t.style.color = PCOL[r.w];
-    s.textContent = r.earlier ? `${nm(r.l)} already ${r.earlier === 'pee' ? 'peed' : 'pooped'} their pants back there.` : `${nm(r.l)} pooped their pants.`;
+    s2.textContent = r.earlier ? `${nm(r.l)} already ${r.earlier === 'pee' ? 'peed' : 'pooped'} their pants back there.` : `${nm(r.l)} pooped their pants.`;
     q.textContent = `Reached the toilet in ${r.time.toFixed(1)} s. ${pick(LINES.quip)}`;
   } else {
     t.textContent = 'Double disaster!'; t.style.color = INK;
-    s.textContent = 'Nobody made it to the toilet.'; q.textContent = 'Somebody call a cleaner. Maybe two.';
+    s2.textContent = 'Nobody made it to the toilet.'; q.textContent = 'Somebody call a cleaner. Maybe two.';
   }
-  $('#resScore').innerHTML = `<span class="s1">P1 ${score[0]}</span><span>–</span><span class="s2">${score[1]} P2</span>`;
+  retry.hidden = true;
+  if (mode === 'career') {
+    const L = careerLevel, won = r.type === 'win' && r.w === 0;
+    chars.textContent = 'Levels';
+    if (won) {
+      const me = players[0], low = Math.min(me.pee, me.poop), stars = low >= 50 ? 3 : low >= 25 ? 2 : 1;
+      const before = totalStars(), newBest = !career.best[L] || r.time < career.best[L];
+      career.stars[L] = Math.max(career.stars[L], stars); if (newBest) career.best[L] = +r.time.toFixed(1); saveCareer();
+      const unlocked = CHARS.filter(ch => ch.unlock && ch.unlock > before && ch.unlock <= totalStars()).map(ch => ch.name);
+      t.textContent = `Level ${L + 1} cleared!`; t.style.color = PCOL[0];
+      s2.textContent = `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}  ${stars === 3 ? 'Cool as a cucumber.' : stars === 2 ? 'A little sweaty.' : 'That was close. Way too close.'}`;
+      q.textContent = `Made it in ${r.time.toFixed(1)} s${newBest ? ' · New best time!' : ` · Best ${career.best[L]} s`}${stars < 3 ? ' · Finish with both meters above half for 3 stars.' : ''}`;
+      sc.innerHTML = unlocked.length ? `<span class="s1">Unlocked: ${unlocked.join(' & ')}!</span>` : `<span>★ ${totalStars()} / ${CAREER.length * 3}</span>`;
+      if (L < CAREER.length - 1) { again.textContent = 'Next level'; resultAction = () => { careerLevel++; startRound(); }; retry.hidden = false; retryAction = startRound; }
+      else { again.textContent = 'Play again'; resultAction = startRound; }
+    } else {
+      t.textContent = `Level ${L + 1} failed`; t.style.color = INK;
+      if (r.type === 'win') s2.textContent = `The computer got there first, and you pooped your pants.`;
+      sc.innerHTML = `<span>★ ${totalStars()} / ${CAREER.length * 3}</span>`;
+      again.textContent = 'Try again'; resultAction = startRound;
+    }
+  } else {
+    chars.textContent = 'Change characters';
+    const pips = i => '●'.repeat(Math.min(score[i], MATCH_TO)) + '○'.repeat(Math.max(0, MATCH_TO - score[i]));
+    sc.innerHTML = `<span class="s1">${PL(0)} ${pips(0)}</span><span>–</span><span class="s2">${pips(1)} ${PL(1)}</span>`;
+    const champ = score[0] >= MATCH_TO ? 0 : score[1] >= MATCH_TO ? 1 : -1;
+    if (champ >= 0) {
+      t.textContent = `${nm(champ)} wins the match!`; t.style.color = PCOL[champ];
+      again.textContent = 'New match'; resultAction = () => { score = [0, 0]; matchRound = 0; startRound(); };
+    } else {
+      again.textContent = `Next round`; resultAction = () => { matchRound++; startRound(); };
+    }
+  }
   el.hidden = false;
   if (r.type === 'draw') Snd.sad();
-  setTimeout(() => { try { $('#againBtn').focus({ preventScroll: true }); } catch (e) {} }, 50);
+  setTimeout(() => { try { again.focus({ preventScroll: true }); } catch (e) {} }, 50);
 }
 function pauseGame() { if (state !== 'play' && state !== 'countdown') return; game.prev = state; state = 'paused'; $('#pause').hidden = false; joy[0] = joy[1] = null; }
 function resumeGame() { if (state !== 'paused') return; state = game.prev || 'play'; $('#pause').hidden = true; last = performance.now(); Snd.init(); }
 function toMenu() {
   state = 'menu'; $('#pause').hidden = true; $('#result').hidden = true; $('#menu').hidden = false;
-  $('#pauseBtn').hidden = true; $('#muteBtn').hidden = true; updateMenuScore();
+  $('#pauseBtn').hidden = true; $('#muteBtn').hidden = true; updateMenuScore(); syncMode(); pickerEls.forEach((el, k) => renderPicker(k));
   try { if (wakeLock) { wakeLock.release(); wakeLock = null; } } catch (e) {}
 }
 $('#pauseBtn').addEventListener('click', pauseGame);
 $('#resumeBtn').addEventListener('click', resumeGame);
 $('#restartBtn').addEventListener('click', startRound);
 $('#quitBtn').addEventListener('click', toMenu);
-$('#againBtn').addEventListener('click', startRound);
+$('#againBtn').addEventListener('click', () => (resultAction || startRound)());
+$('#retryBtn').addEventListener('click', () => (retryAction || startRound)());
 $('#charsBtn').addEventListener('click', toMenu);
-$('#startBtn').addEventListener('click', startRound);
+$('#startBtn').addEventListener('click', () => { if ($('#startBtn').disabled) return; if (mode !== 'career') { score = [0, 0]; matchRound = 0; } startRound(); });
 function syncMute() { $('#waves').style.display = Snd.muted ? 'none' : ''; $('#muteBtn').setAttribute('aria-label', Snd.muted ? 'Turn sound on' : 'Mute sound'); $('#muteBtn').style.opacity = Snd.muted ? 0.6 : 1; }
 $('#muteBtn').addEventListener('click', () => { Snd.setMuted(!Snd.muted); Snd.init(); syncMute(); });
 syncMute();
@@ -2179,9 +2367,11 @@ function statRows(ch) {
   return rows.map(([k, v]) => `<dt>${k}</dt><dd><i style="width:${Math.round(clamp(v, 0.08, 1) * 100)}%"></i></dd>`).join('');
 }
 function renderPicker(i) {
-  const el = pickerEls[i], ch = CHARS[sel[i]];
-  el.querySelector('.cname').textContent = ch.name;
-  el.querySelector('.ctag').textContent = ch.tag;
+  const el = pickerEls[i], ch = CHARS[sel[i]], lock = charLocked(ch);
+  el.classList.toggle('locked', lock);
+  el.querySelector('.cname').textContent = lock ? `${ch.name} (locked)` : ch.name;
+  el.querySelector('.ctag').textContent = lock ? `Earn ${ch.unlock} career stars to unlock. You have ${totalStars()}.` : ch.tag;
+  syncStart();
   el.querySelector('.perk').textContent = ch.perkText;
   el.querySelector('.stats').innerHTML = statRows(ch);
 }
@@ -2202,11 +2392,39 @@ for (const id of Object.keys(THEMES)) {
 function syncMaps() { mapsEl.querySelectorAll('.map').forEach(b => b.setAttribute('aria-checked', String(b.dataset.map === mapId))); }
 syncMaps();
 function syncMode() {
-  document.querySelectorAll('.mode').forEach(b => b.setAttribute('aria-checked', String((b.dataset.mode === 'cpu') === vsCPU)));
+  vsCPU = mode !== '2p';
+  document.querySelectorAll('.mode').forEach(b => b.setAttribute('aria-checked', String(b.dataset.mode === mode)));
   $('#p2chip').textContent = vsCPU ? 'Computer' : 'Player 2';
-  syncCtrlLabels(); updateMenuScore();
+  const career2 = mode === 'career';
+  pickerEls[1].hidden = career2; $('#vsMark').hidden = career2;
+  $('.pickers').style.gridTemplateColumns = career2 ? 'minmax(0,520px)' : '';
+  $('.pickers').style.justifyContent = career2 ? 'center' : '';
+  $('#mapBox').hidden = career2; $('#careerBox').hidden = !career2;
+  renderLevels(); syncCtrlLabels(); updateMenuScore(); syncStart();
 }
-document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => { const v2 = b.dataset.mode === 'cpu'; if (v2 !== vsCPU) score = [0, 0]; vsCPU = v2; syncMode(); }));
+function renderLevels() {
+  const box = $('.levels'); box.innerHTML = '';
+  if (!levelOpen(careerLevel)) careerLevel = 0;
+  CAREER.forEach((L, k) => {
+    const b = document.createElement('button'), open = levelOpen(k), st = career.stars[k];
+    b.className = 'lvl'; b.setAttribute('role', 'radio'); b.disabled = !open; b.setAttribute('aria-checked', String(k === careerLevel));
+    b.innerHTML = `<b>${k + 1}. ${L.name}</b><small>${THEMES[L.map].name} · ${L.cols}×${L.rows} rooms${L.key ? ' · key' : ''}</small><span class="st">${'★'.repeat(st)}<i>${'★'.repeat(3 - st)}</i></span><small>${open ? (career.best[k] ? `Best ${career.best[k]} s` : 'Not cleared yet') : 'Clear the level before'}</small>`;
+    b.addEventListener('click', () => { careerLevel = k; renderLevels(); syncStart(); });
+    box.appendChild(b);
+  });
+  $('#starCount').textContent = `★ ${totalStars()} / ${CAREER.length * 3}`;
+  const next = CHARS.filter(ch => ch.unlock && ch.unlock > totalStars()).sort((a, b) => a.unlock - b.unlock)[0];
+  $('#unlockNote').textContent = next ? `Next unlock: ${next.name} at ${next.unlock} stars.` : 'Every character unlocked. Royalty awaits.';
+}
+function syncStart() {
+  const b = $('#startBtn'); if (!b) return;
+  const lockedPick = charLocked(CHARS[sel[0]]) || (mode === '2p' && charLocked(CHARS[sel[1]]));
+  b.disabled = lockedPick;
+  b.textContent = lockedPick ? 'That character is locked' : mode === 'career' ? `Play level ${careerLevel + 1}` : 'Start the match';
+}
+document.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => { if (b.dataset.mode !== mode) score = [0, 0]; mode = b.dataset.mode; syncMode(); }));
+if (setupMode && ['2p', 'cpu', 'career'].includes(setupMode)) mode = setupMode; else if (vsCPU) mode = 'cpu';
+careerLevel = clamp(setupLvl | 0, 0, CAREER.length - 1);
 function syncCtrlLabels() {
   const touch = matchMedia('(pointer: coarse)').matches;
   if (vsCPU) { document.querySelector('[data-ctrl="0"]').textContent = touch ? 'Drag anywhere to steer' : 'WASD or arrow keys'; document.querySelector('[data-ctrl="1"]').textContent = 'Played by the computer'; return; }
@@ -2228,7 +2446,9 @@ function drawPreviews(dt) {
     const t = previewT[i], cyc = t % 6, k = r.width / 150;
     c.save(); c.fillStyle = i ? 'rgba(47,107,255,.12)' : 'rgba(255,90,54,.12)'; ell(c, r.width / 2, r.height * 0.93, 46 * k, 13 * k); c.fill(); c.restore();
     const urg = cyc > 3 ? 0.7 + 0.25 * Math.sin(t) : 0.1;
+    const lockedCh = charLocked(CHARS[sel[i]]);
     drawChar(c, CHARS[sel[i]], { x: r.width / 2, y: r.height * 0.93, t, facing: i ? -1 : 1, urg, face: cyc > 4.6 ? 'panic' : cyc > 3 ? 'strain' : 'normal', lw: 1.8, k: r.height * 0.82 / CHAR_H, seed: i * 3, cheer: cyc < 0.6, tint: CHARS[sel[i]].pee > CHARS[sel[i]].poop ? '#ff3b3b' : '#6cbf2f', tintA: clamp((urg - 0.5) * 0.8, 0, 0.35) });
+    if (lockedCh) { c.save(); c.globalCompositeOperation = 'source-atop'; c.fillStyle = 'rgba(31,36,68,.92)'; c.fillRect(0, 0, r.width, r.height); c.restore(); c.save(); outlined(c, '?', r.width / 2, r.height * 0.5, 44, '#ffd23f', 6); c.restore(); }
   });
 }
 
