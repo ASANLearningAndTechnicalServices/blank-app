@@ -245,11 +245,11 @@ footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-si
 <div class="hero">
   <div class="meta">
     <span class="pill p-acc">Plan for review</span>
-    <span class="pill p-line">Version 1 · 6 Oct 2026</span>
+    <span class="pill p-line">Version 2 · 6 Oct 2026</span>
     <span class="pill p-line">Nothing built yet</span>
   </div>
   <h1>FRAC Pipeline: lead to collected payment, in one place</h1>
-  <p class="lede">A business tracker for the sales and accounts teams at FRAC. It shows every new and existing business proposition from first enquiry to won order. After a deal is won it follows three things: order booking, report delivery and billing, and payment collection. It is not a second FORT. It does not price parameters, build quotations or keep the books. It records the business, keeps the customer's files and reads the numbers that LIMS and Tally already hold.</p>
+  <p class="lede">A business tracker for the sales and accounts teams at FRAC. It shows every new and existing business proposition from first enquiry to won order. After a deal is won it follows three things: order booking, report delivery and billing, and payment collection. It does not price parameters, build quotations or keep the books. It records the business, keeps the customer's files and reads the numbers that LIMS and Tally already hold. It stands on its own and does not depend on any other FRAC tool being ready.</p>
   <div class="principles">
     <div><b>Fill it in under a minute</b><span>A new lead needs five fields. The one rule the tool enforces: every open deal has a next step and a date.</span></div>
     <div><b>Sheets in, nothing retyped</b><span>Upload the LIMS booking export and the Tally reports. The tool shows what changed and updates its records.</span></div>
@@ -281,13 +281,13 @@ footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-si
     <div class="panel">
       <h3>Out of scope</h3>
       <ul class="tight">
-        <li>Parameters, packages, rates, feasibility and quotation building. That stays in FORT; a deal stores only the quoted value and the quotation file.</li>
+        <li>Parameters, packages, rates, feasibility and quotation building. A deal stores only the quoted value and the quotation file, however the quotation was prepared.</li>
         <li>Sample registration and report generation. That stays in LIMS / the booking software; the tracker reads its export.</li>
         <li>Invoicing and accounting. That stays in Tally; the tracker reads its exports and never writes back.</li>
         <li>Marketing campaigns, email sequences, call dialling</li>
         <li>Complex approvals or discount workflows</li>
       </ul>
-      <p class="muted" style="font-size:.86rem">FORT, LIMS and Tally each stay the record for their own data. The tracker joins them up by customer and deal.</p>
+      <p class="muted" style="font-size:.86rem">LIMS and Tally stay the record for their own data. The tracker joins them up by customer and deal. FORT can be linked later, once it is stable, without changing the tracker's design.</p>
     </div>
   </div>
 </section>
@@ -305,7 +305,7 @@ footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-si
       <div class="phase o2c ph-b">Order-to-cash · mostly from uploads</div>
       <div class="step a"><i class="dot"></i><b>Lead</b><small>A name and a need. 10%</small><span class="src pill p-line">Sales</span></div>
       <div class="step a"><i class="dot"></i><b>Qualified</b><small>Contact, service and rough value known. 25%</small><span class="src pill p-line">Sales</span></div>
-      <div class="step a"><i class="dot"></i><b>Proposal sent</b><small>Quotation or proposal submitted (from FORT or a file). 50%</small><span class="src pill p-line">Sales / CRM</span></div>
+      <div class="step a"><i class="dot"></i><b>Proposal sent</b><small>Quotation or proposal submitted; file attached. 50%</small><span class="src pill p-line">Sales / CRM</span></div>
       <div class="step a"><i class="dot"></i><b>Negotiation</b><small>Revisions, follow-ups, approval wait. 70%</small><span class="src pill p-line">Sales</span></div>
       <div class="step b"><i class="dot"></i><b>Won</b><small>PO, LOI, work order or email confirmation attached</small><span class="src pill p-line">Sales</span></div>
       <div class="step b"><i class="dot"></i><b>Booked</b><small>Samples or work booked; booking no. and value</small><span class="src pill p-info">LIMS upload</span></div>
@@ -427,7 +427,7 @@ footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-si
           <div class="stack">
             <div class="acct-h">
               <div style="display:grid;gap:4px"><h4 style="margin:0;font-family:var(--f-display);font-size:1.3rem">Sunrise Dairy Pvt Ltd</h4>
-                <div class="row"><span class="pill p-line mono">LIMS C-10482</span><span class="pill p-line">Private</span><span class="pill p-line">Group: Sunrise Group</span><span class="pill p-line">Billing: Centralised</span></div></div>
+                <div class="row"><span class="pill p-line mono">GSTIN 07AAKCS1234F1Z5</span><span class="pill p-line">Private</span><span class="pill p-line">Dairy</span><span class="pill p-line">Delhi NCR</span></div></div>
               <div class="row"><span class="btn">Open Drive folder ↗</span><span class="btn pri">+ Upload files</span></div>
             </div>
             <div class="kpis">
@@ -546,7 +546,7 @@ footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-si
       <div class="panel"><h3>Five fields for a new lead</h3><p>Customer (search existing or type a new name), service, new or existing, estimated value, next step with a date. Contact person is optional. Everything else can be added later.</p></div>
       <div class="panel"><h3>One enforced rule</h3><p>An open deal cannot be saved without a next step and its date. That single habit drives the Today list, the reminders and the "no next step" alert.</p></div>
       <div class="panel"><h3>Edit where you look</h3><p>Change stage, value, owner or date directly in the board or list. No separate edit screen for common changes. Logging a call is one click with a short note.</p></div>
-      <div class="panel"><h3>Customers come pre-loaded</h3><p>The LIMS customer master is imported on day one, matched on LIMS Customer ID, the same key FORT uses. Typing a name suggests the existing customer before creating a duplicate.</p></div>
+      <div class="panel"><h3>Customers come pre-loaded</h3><p>On day one the customer list is imported from the most complete source available: the current tracker, the LIMS customer list or Tally's ledger list. Typing a name suggests the existing customer before creating a duplicate.</p></div>
       <div class="panel"><h3>Indian formats throughout</h3><p>₹ in lakh and crore (₹4.8 L, ₹1.84 Cr), dates as 06 Oct 26, financial year April to March, quarters as Q3 FY27, GSTIN on the customer.</p></div>
       <div class="panel"><h3>Works on a phone</h3><p>Sales staff can add a lead or log a visit from the field. Today, Pipeline and a customer's files all work at phone width.</p></div>
     </div>
@@ -572,9 +572,9 @@ footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-si
   <div class="tablewrap"><table>
     <thead><tr><th>Record</th><th>What it holds</th><th>Key fields</th></tr></thead>
     <tbody>
-      <tr><td><b>Customer</b></td><td>The company. Same meaning as FORT's Customer Master.</td><td>Name, <span class="mono">LIMS Customer ID</span> (unique), sector (Private / Government), group company, city, state, GSTIN, billing mode, owner, Drive folder link, name aliases (how Tally and LIMS spell it)</td></tr>
+      <tr><td><b>Customer</b></td><td>The company. The tracker keeps its own customer list.</td><td>Name, sector (Private / Government), industry, city, state, GSTIN, owner, parent group (optional), Drive folder link, IDs and spellings in other systems (LIMS customer code, Tally ledger name)</td></tr>
       <tr><td><b>Contact</b></td><td>People at the customer</td><td>Name, designation, phone, email, role (decision maker, purchase, QA, accounts)</td></tr>
-      <tr><td><b>Deal</b></td><td>One business proposition</td><td>Title, customer, service, business type (New / Repeat / New service / Renewal / Tender), source, stage, estimated value, probability, expected close month, owner, next step + date, FORT enquiry no. (optional), lost reason, PO / LOI no.</td></tr>
+      <tr><td><b>Deal</b></td><td>One business proposition</td><td>Title, customer, service, business type (New / Repeat / New service / Renewal / Tender), source, stage, estimated value, probability, expected close month, owner, next step + date, enquiry / quotation reference (optional, free text), lost reason, PO / LOI no.</td></tr>
       <tr><td><b>Activity</b></td><td>Calls, visits, emails, notes on a deal or customer</td><td>Type, date, note, who, outcome</td></tr>
       <tr><td><b>Booking</b></td><td>Work booked after a win; a rate-contract deal can have many</td><td><span class="pill p-info">LIMS</span> booking no., date, samples, booked value, report due date, reports delivered / total, last report date · <i>linked deal (set once, remembered)</i></td></tr>
       <tr><td><b>Invoice</b></td><td>A bill raised in Tally</td><td><span class="pill p-money">Tally</span> invoice no., date, party name, amount incl. GST, due date, pending amount, overdue days · <i>linked booking / deal</i></td></tr>
@@ -624,7 +624,7 @@ flowchart LR
     <thead><tr><th>Source sheet</th><th>Matched on</th><th>Updates</th><th>How often</th></tr></thead>
     <tbody>
       <tr><td><b>Current lead tracker</b> (the Excel or Google Sheet in use today)</td><td>Customer name + deal title</td><td>One-time load of open and recent deals</td><td>Once, at launch</td></tr>
-      <tr><td><b>LIMS customer master</b></td><td>LIMS Customer ID</td><td>Customers (new ones added, names and GSTIN refreshed)</td><td>Monthly</td></tr>
+      <tr><td><b>Customer list</b> (LIMS customer list or Tally ledger list)</td><td>GSTIN, then the system's customer code, then a remembered name</td><td>Customers (new ones added, codes and GSTIN filled in)</td><td>Monthly</td></tr>
       <tr><td><b>LIMS / booking register</b></td><td>Booking no.</td><td>Bookings, samples, booked value, report status and dates</td><td>Daily or weekly</td></tr>
       <tr><td><b>Tally · Sales Register</b></td><td>Voucher / invoice no.</td><td>Invoices raised: number, date, party, amount</td><td>Weekly</td></tr>
       <tr><td><b>Tally · Bills Receivable</b> (Date, Ref. No., Party's Name, Pending Amount, Due on, Overdue by days)</td><td>Ref. no.</td><td>Pending amount and overdue days; invoices missing from a full snapshot become Paid</td><td>Weekly, or before each collections review</td></tr>
@@ -636,7 +636,7 @@ flowchart LR
     <div class="panel"><h3>Each field has one owner</h3><p>Tally owns invoice amounts and pending balances. LIMS owns booking and report facts. People own stages, notes, owners and follow-ups. An upload never overwrites a field it does not own.</p></div>
     <div class="panel"><h3>Learns customer names</h3><p>When Tally says "SUNRISE DAIRY PVT. LTD. (HO)", the user picks the customer once and the alias is remembered. GSTIN is used to match when the sheet has it.</p></div>
     <div class="panel"><h3>Links money to deals</h3><p>An invoice is linked to a booking by booking no. or PO no. when the sheet carries it, otherwise suggested from the same customer's recent bookings for one-click confirmation.</p></div>
-    <div class="panel"><h3>Keeps a full trail</h3><p>The raw file and every row are stored as received, the same raw-then-normalised pattern FORT uses. Any batch can be undone for 30 days.</p></div>
+    <div class="panel"><h3>Keeps a full trail</h3><p>The raw file and every row are stored exactly as received, before any record is updated. Any batch can be undone for 30 days.</p></div>
   </div>
   <div class="callout"><p><b>Snapshot rule:</b> a Bills Receivable export is treated as the complete list of open invoices on that date. An invoice that was open last time and is missing now is shown as "will be marked Paid" in the preview. The user can untick any row before applying, so a partial export never closes invoices by mistake.</p></div>
 </section>
@@ -708,27 +708,26 @@ flowchart LR
   </div>
   <div class="grid2">
     <div class="panel">
-      <h3>Why this stack, not Streamlit like FORT</h3>
+      <h3>Why this stack, not Streamlit</h3>
       <ul class="tight">
-        <li>FORT's own notes say edits on Streamlit Community Cloud are lost on restart. A tracker must keep data and files permanently.</li>
+        <li>Streamlit Community Cloud does not keep files saved on its disk across restarts. A tracker must keep data and files permanently.</li>
         <li>Claude and ChatGPT need an always-on HTTPS endpoint with sign-in. Streamlit cannot serve one; Next.js serves the screens and the connector from one codebase.</li>
         <li>Drag-and-drop boards, inline editing and a phone layout are standard in a React UI and hard to make feel polished in Streamlit.</li>
         <li>Supabase supplies the database, Google sign-in, the OAuth server the connector needs, and file storage, so there are no extra services to run.</li>
       </ul>
     </div>
     <div class="panel">
-      <h3>Fits with FORT</h3>
+      <h3>Independent of FORT</h3>
       <ul class="tight">
-        <li>Same customer key: LIMS Customer ID.</li>
-        <li>A deal can carry the FORT enquiry no. so the quotation is one click away.</li>
-        <li>FORT already supports a PostgreSQL URL. Both apps can live in the same Supabase project in separate schemas.</li>
-        <li>Later, FORT's Submit to Booking can create or advance the matching deal automatically.</li>
+        <li>The tracker has its own customer list and data structure. It does not read FORT's tables or assume how FORT stores data.</li>
+        <li>A deal has a free-text enquiry / quotation reference, so it works with today's quotation process and with FORT later.</li>
+        <li>Once FORT is stable, a small agreed hand-off (customer name or GSTIN, reference no., value, quotation file) can create or advance a deal. Nothing in this plan has to change for that.</li>
       </ul>
     </div>
   </div>
   <div class="grid3">
     <div class="panel"><h3>Access</h3><p>Google sign-in limited to the fraclabs.org domain. Roles: Sales, Leadership, Accounts, Admin. Enforced in the database, so the connector cannot see more than the portal.</p></div>
-    <div class="panel"><h3>Data safety</h3><p>Hosted in India (Mumbai). Private repository; no customer data in git, as FORT already requires. Daily backups, signed time-limited links for files, full change log.</p></div>
+    <div class="panel"><h3>Data safety</h3><p>Hosted in India (Mumbai). Private repository; no customer data in git. Daily backups, signed time-limited links for files, full change log.</p></div>
     <div class="panel"><h3>Running cost</h3><p>About US$45 a month (≈ ₹4,000): Supabase Pro $25 and one Vercel Pro seat $20. Viewers need no seat. Claude or ChatGPT plans are separate.</p></div>
   </div>
 </section>
@@ -737,15 +736,15 @@ flowchart LR
 <section id="roles">
   <header>
     <span class="eyebrow">Roles</span>
-    <h2>Four roles, mapped to FORT's existing ones</h2>
+    <h2>Four roles</h2>
   </header>
   <div class="tablewrap"><table>
-    <thead><tr><th>Portal role</th><th>FORT roles</th><th>Can do</th></tr></thead>
+    <thead><tr><th>Portal role</th><th>Typically</th><th>Can do</th></tr></thead>
     <tbody>
-      <tr><td><b>Sales</b></td><td>Sales Manager, CRM</td><td>See all customers and deals; create and edit own deals; log activities; upload files; collection follow-ups on own customers</td></tr>
-      <tr><td><b>Leadership</b></td><td>Sales Head, CEO</td><td>Everything Sales can, on every deal; reassign owners; targets; exports</td></tr>
-      <tr><td><b>Accounts</b></td><td>(new)</td><td>Run LIMS and Tally uploads; edit billing and collection fields; collection follow-ups on all customers</td></tr>
-      <tr><td><b>Admin</b></td><td>(new)</td><td>Users, settings, saved layouts, undo uploads</td></tr>
+      <tr><td><b>Sales</b></td><td>Sales managers, CRM / customer service</td><td>See all customers and deals; create and edit own deals; log activities; upload files; collection follow-ups on own customers</td></tr>
+      <tr><td><b>Leadership</b></td><td>Sales head, CEO</td><td>Everything Sales can, on every deal; reassign owners; targets; exports</td></tr>
+      <tr><td><b>Accounts</b></td><td>Accounts team</td><td>Run LIMS and Tally uploads; edit billing and collection fields; collection follow-ups on all customers</td></tr>
+      <tr><td><b>Admin</b></td><td>One or two named owners</td><td>Users, settings, saved layouts, undo uploads</td></tr>
     </tbody></table></div>
 </section>
 
@@ -790,7 +789,7 @@ flowchart LR
       <div class="body"><p>Collect the sample sheets and confirm the decisions below. Turn these mockups into a clickable prototype and walk the sales and accounts teams through it.</p>
       <div class="exit"><b>Done when:</b> stages, fields and roles are signed off, and sample LIMS and Tally exports are in hand.</div></div></div>
     <div class="ph"><div class="when"><b>Phase 1</b><span class="mono muted">Weeks 2–4</span><span class="pill p-acc" style="justify-self:start">Pipeline</span></div>
-      <div class="body"><p>Sign-in and roles; customers (LIMS customer master import) and contacts; deals with board and list; activities and next steps; Today screen; file vault with bulk upload; one-time import of the current lead tracker.</p>
+      <div class="body"><p>Sign-in and roles; customers (customer list import) and contacts; deals with board and list; activities and next steps; Today screen; file vault with bulk upload; one-time import of the current lead tracker.</p>
       <div class="exit"><b>Done when:</b> the weekly sales review runs from the portal instead of the spreadsheet.</div></div></div>
     <div class="ph"><div class="when"><b>Phase 2</b><span class="mono muted">Weeks 5–7</span><span class="pill p-money" style="justify-self:start">Order-to-cash</span></div>
       <div class="body"><p>Bookings, invoices, payments and collection follow-ups; the upload engine with saved layouts, change preview, name matching and undo; order-to-cash screen; alerts; collections review.</p>
@@ -799,7 +798,7 @@ flowchart LR
       <div class="body"><p>The <span class="mono">/mcp</span> connector with read and write tools; sign-in through Supabase OAuth; set up in Claude and in ChatGPT; daily digest email.</p>
       <div class="exit"><b>Done when:</b> a salesperson can list and log follow-ups from Claude or ChatGPT, and the change log shows the channel.</div></div></div>
     <div class="ph"><div class="when"><b>Later</b><span class="mono muted">As needed</span></div>
-      <div class="body"><p>Automatic hand-off from FORT; targets and incentives view; direct read from Tally over its built-in XML interface through a small agent on the Tally PC, replacing the manual Tally upload; WhatsApp or email reminders to customers for overdue invoices.</p></div></div>
+      <div class="body"><p>Hand-off from FORT once it is ready; targets and incentives view; direct read from Tally over its built-in XML interface through a small agent on the Tally PC, replacing the manual Tally upload; WhatsApp or email reminders to customers for overdue invoices.</p></div></div>
   </div>
 </section>
 
@@ -810,13 +809,13 @@ flowchart LR
     <h2>Decisions and inputs needed before building</h2>
   </header>
   <div class="decisions">
-    <div class="decision"><h3>1. Stack</h3><p class="rec"><b>Recommendation:</b> Next.js + Supabase as above. The alternative is a Streamlit app like FORT plus a separate small Python service for the connector and a hosted database; it is quicker to start but harder to make polished and needs two deployments.</p></div>
+    <div class="decision"><h3>1. Stack</h3><p class="rec"><b>Recommendation:</b> Next.js + Supabase as above. The alternative is a Streamlit app plus a separate small Python service for the connector and a hosted database; it is quicker to start but harder to make polished and needs two deployments.</p></div>
     <div class="decision"><h3>2. Who sees what</h3><p class="rec"><b>Recommendation:</b> everyone sees every customer and deal; people edit their own deals. Say if any team needs restricted visibility.</p></div>
-    <div class="decision"><h3>3. The booking software</h3><p class="rec">Is order booking done in LIMS (where FORT's Submit to Booking ends)? A sample export with the column headers is needed, including booking no., customer ID, sample count, value and report status.</p></div>
+    <div class="decision"><h3>3. The booking software</h3><p class="rec">Which software is used for order booking (LIMS or another)? A sample export with the column headers is needed, including booking no., customer, sample count, value and report status.</p></div>
     <div class="decision"><h3>4. Tally exports</h3><p class="rec">Samples of the Sales Register and Bills Receivable exports as Accounts produces them today. Confirm that bill-wise details are maintained for customer ledgers, which Bills Receivable depends on.</p></div>
     <div class="decision"><h3>5. Claude and ChatGPT plans</h3><p class="rec">Which plans FRAC holds. Claude Team or Enterprise and ChatGPT Business or Enterprise allow organisation-wide connectors with write actions; personal plans have limits.</p></div>
     <div class="decision"><h3>6. File storage</h3><p class="rec"><b>Recommendation:</b> files stored inside the portal (private, searchable, linked to deals), with an optional Google Drive folder link per customer for existing folders. Bulk-import old files by zip.</p></div>
-    <div class="decision"><h3>7. Stage names, lost reasons, users</h3><p class="rec">Confirm or rename the five stages and the lost reasons; send the list of users with their roles; share the current lead tracker for the one-time import.</p></div>
+    <div class="decision"><h3>7. Stage names, lost reasons, users</h3><p class="rec">Confirm or rename the five stages, the service list and the lost reasons; send the list of users with their roles; share the current lead tracker and the best available customer list for the one-time import.</p></div>
   </div>
 </section>
 
@@ -830,7 +829,7 @@ flowchart LR
     <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
     <tbody>
       <tr><td>The team keeps using the old spreadsheet</td><td>Five-field entry, a morning digest that is only useful if the portal is up to date, and the weekly review run from the portal from Phase 1</td></tr>
-      <tr><td>Customer names differ across LIMS, Tally and the tracker</td><td>LIMS Customer ID as the key, GSTIN when present, and remembered aliases picked once per spelling</td></tr>
+      <tr><td>Customer names differ across LIMS, Tally and the tracker</td><td>The tracker's own customer record, GSTIN when present, each system's customer code, and remembered aliases picked once per spelling</td></tr>
       <tr><td>An upload changes the wrong records</td><td>Preview before apply, field ownership, untick any row, raw file kept, undo for 30 days</td></tr>
       <tr><td>An assistant makes an unwanted change</td><td>Small set of write tools, no deletes, confirmation on every write, change log with channel</td></tr>
       <tr><td>Export formats change after a Tally or LIMS update</td><td>A changed header is flagged and mapped once in the upload screen, without a code change</td></tr>
@@ -839,7 +838,7 @@ flowchart LR
 </section>
 
 <footer>
-  <span>Based on FRAC's FORT repository: services, roles, customer master fields (LIMS Customer ID, sector, group company, billing mode) and the raw-then-normalised import pattern.</span>
+  <span>The tracker does not depend on FORT, which is still being prepared. The service list (Analytical Testing, Research, Survey / Study, FoSTaC Training, Consultancy) is a starting point and editable in settings.</span>
   <span>Sources checked 6 Oct 2026: Anthropic custom connector help pages, OpenAI developer mode help page, Supabase OAuth 2.1 server docs, Tally Bills Receivable help, Supabase and Vercel pricing.</span>
 </footer>
 </div>
