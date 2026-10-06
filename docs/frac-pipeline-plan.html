@@ -63,6 +63,8 @@ th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);verti
 th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface-2)}
 tr:last-child td{border-bottom:0}
 td.r,th.r{text-align:right}
+td .mono,td.mono{white-space:nowrap}
+.main .tablewrap table{min-width:760px}
 .callout{border-left:3px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 10px 10px 0}
 .callout p{max-width:none}
 
@@ -280,7 +282,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
 <div class="hero">
   <div class="meta">
     <span class="pill p-acc">Plan for review</span>
-    <span class="pill p-line">Version 3 · 6 Oct 2026</span>
+    <span class="pill p-line">Version 4 · 6 Oct 2026</span>
     <span class="pill p-line">Nothing built yet</span>
   </div>
   <h1>FRAC Pipeline: lead to collected payment, in one place</h1>
@@ -309,7 +311,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
         <li>Import of the Google Sheets trackers that individuals keep today</li>
         <li>Spreadsheet-style grid editing with filters, saved lists and a calling mode for working through a list</li>
         <li>Follow-up log and reminders for sales and collections</li>
-        <li>After a deal is won: bookings, report delivery, invoices, payments, ageing and follow-ups</li>
+        <li>After a deal is won: orders, report status, invoices, payments, ageing and follow-ups</li>
         <li>A file vault per customer for old and new documents (proposals, POs, agreements, reports, invoices)</li>
         <li>Sheet uploads from LIMS and Tally that update existing records</li>
         <li>Dashboards for the weekly sales review and the monthly collections review</li>
@@ -320,7 +322,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
       <h3>Out of scope</h3>
       <ul class="tight">
         <li>Parameters, packages, rates, feasibility and quotation building. A deal stores only the quoted value and the quotation file, however the quotation was prepared.</li>
-        <li>Sample registration and report generation. That stays in LIMS / the booking software; the tracker reads its export.</li>
+        <li>Sample registration and report generation. That stays in LIMS / the booking software; the tracker reads its order and report status sheets.</li>
         <li>Invoicing and accounting. That stays in Tally; the tracker reads its exports and never writes back.</li>
         <li>Marketing campaigns, email sequences, call dialling</li>
         <li>Complex approvals or discount workflows</li>
@@ -346,7 +348,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
   <header>
     <span class="eyebrow">The journey</span>
     <h2>One line from enquiry to cash, with a clear owner for each fact</h2>
-    <p class="muted">Pipeline stages are filled in by people. Order-to-cash stages are filled mostly by sheet uploads, so nobody types a booking number or an invoice amount twice.</p>
+    <p class="muted">Pipeline stages are filled in by people. Order-to-cash stages are filled mostly by sheet uploads, so nobody types an order number or an invoice amount twice.</p>
   </header>
   <div class="journey" role="img" aria-label="Lifecycle: Lead, Qualified, Proposal sent, Negotiation, Won, then Booked, Reported, Billed, Paid">
     <div class="track">
@@ -357,8 +359,8 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
       <div class="step a"><i class="dot"></i><b>Proposal sent</b><small>Quotation or proposal submitted; file attached. 50%</small><span class="src pill p-line">Sales / CRM</span></div>
       <div class="step a"><i class="dot"></i><b>Negotiation</b><small>Revisions, follow-ups, approval wait. 70%</small><span class="src pill p-line">Sales</span></div>
       <div class="step b"><i class="dot"></i><b>Won</b><small>PO, LOI, work order or email confirmation attached</small><span class="src pill p-line">Sales</span></div>
-      <div class="step b"><i class="dot"></i><b>Booked</b><small>Samples or work booked; booking no. and value</small><span class="src pill p-info">LIMS upload</span></div>
-      <div class="step b"><i class="dot"></i><b>Reported</b><small>Reports delivered against booked samples</small><span class="src pill p-info">LIMS upload</span></div>
+      <div class="step b"><i class="dot"></i><b>Booked</b><small>Order no., sample names, number of samples, value</small><span class="src pill p-info">Order sheet</span></div>
+      <div class="step b"><i class="dot"></i><b>Reported</b><small>Reports delivered against the order's samples</small><span class="src pill p-info">Report status sheet</span></div>
       <div class="step b"><i class="dot"></i><b>Billed</b><small>Invoice no., date, amount with GST</small><span class="src pill p-money">Tally upload</span></div>
       <div class="step b"><i class="dot"></i><b>Paid</b><small>Pending amount reaches zero; follow-ups until then</small><span class="src pill p-money">Tally upload</span></div>
     </div>
@@ -373,9 +375,10 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
     <h2>Every lead lands in one inbox, wherever it came from</h2>
     <p class="muted">Website and campaign leads arrive without anyone typing them. Each one is checked for duplicates, assigned to an owner and shown in the lead inbox until someone converts it to a deal, adds it to an existing customer or discards it with a reason.</p>
   </header>
+  <div class="callout"><p><b>Website leads come straight here, with no Google Sheet in between.</b> A submission reaches the tracker within seconds, is assigned the moment it arrives, and the owner is alerted straight away. Google Forms work the same way through a small script on the form.</p></div>
   <div class="channels">
     <div class="channel"><span class="pill p-acc" style="justify-self:start">Website</span><h3>FRAC website enquiry forms</h3><p class="how">Each form gets its own secure address in the tracker. The website's existing form posts to it, or a small embed snippet replaces the form. The page, and the campaign tags in the link (source, medium, campaign), are saved with the lead.</p></div>
-    <div class="channel"><span class="pill p-acc" style="justify-self:start">Campaigns</span><h3>Google Forms</h3><p class="how">A short script attached to the form sends each response the moment it is submitted. Or connect the form's response sheet and the tracker reads new rows every 15 minutes. Either way, choose the campaign once and every response is tagged with it.</p></div>
+    <div class="channel"><span class="pill p-acc" style="justify-self:start">Campaigns</span><h3>Google Forms</h3><p class="how">A short script attached to the form sends each response to the tracker the moment it is submitted. Reading the response sheet every 15 minutes is kept only as a fallback for a form that cannot take the script. Choose the campaign once and every response is tagged with it.</p></div>
     <div class="channel"><span class="pill p-acc" style="justify-self:start">Campaigns</span><h3>Other form tools and ads</h3><p class="how">Typeform, Jotform, Zoho Forms and similar tools post to the same secure address. LinkedIn and Facebook lead ads, which have no direct webhook, connect through Zapier, Make or n8n.</p></div>
     <div class="channel"><span class="pill p-line" style="justify-self:start">Later</span><h3>Forms built in the tracker</h3><p class="how">A simple form builder for events: pick fields, name the campaign, share the link or a QR code at an exhibition or a FoSTaC session.</p></div>
   </div>
@@ -384,13 +387,25 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
       <ul class="tight">
         <li><b>Spam check:</b> an invisible challenge (Cloudflare Turnstile), a hidden trap field and a limit per sender. Flagged entries go to a Spam tab, not the inbox.</li>
         <li><b>Duplicate check:</b> email, phone, GSTIN and company name are compared with existing customers and open leads. A likely match is offered as "Add to Metro Bakers".</li>
-        <li><b>Assignment:</b> rules by service, region or campaign, otherwise turn by turn. The owner gets an email, and the lead shows on their Today list.</li>
-        <li><b>Acknowledgement (optional):</b> an automatic thank-you email to the enquirer with a named contact.</li>
+        <li><b>Acknowledgement (optional):</b> an automatic thank-you email to the enquirer with the name of the person who will call.</li>
+        <li><b>Backup:</b> the website's existing email notification stays on for the first few weeks, so no lead can be missed while the new route beds in.</li>
       </ul></div>
+    <div class="panel"><h3>Allocated in seconds, contacted fast</h3>
+      <ul class="tight">
+        <li><b>On arrival:</b> assigned by rules (service, region, campaign; an existing customer goes to its account owner), otherwise turn by turn among people on duty. People on leave are skipped.</li>
+        <li><b>Instant alerts:</b> an in-app alert, a push notification on phone or desktop, and an email. A WhatsApp alert is optional and needs a WhatsApp Business API provider, charged per message.</li>
+        <li><b>Response clock:</b> each new lead shows how long it has waited until a call or email is logged. If nobody has made contact within 30 minutes in working hours (adjustable), the Sales Head is alerted and can reassign it in one click.</li>
+        <li><b>Out of hours:</b> the acknowledgement goes at once; the lead goes to the morning roster and tops that person's Today list.</li>
+      </ul></div>
+  </div>
+  <div class="grid2">
     <div class="panel"><h3>Campaigns are measured end to end</h3>
       <p>Each form belongs to a campaign: a name, channel and dates, with spend if you want cost per lead. Because the lead becomes a deal and the deal reaches payment, the campaign report runs all the way through.</p>
       <div class="funnel"><span class="pill p-acc">Leads 120</span><span class="arrow">→</span><span class="pill p-acc">Converted 34</span><span class="arrow">→</span><span class="pill p-ok">Won 9 · ₹11.2 L</span><span class="arrow">→</span><span class="pill p-money">Collected ₹6.8 L</span></div>
-      <p class="muted" style="font-size:.84rem">Example figures. Time to first response is tracked for every lead.</p>
+      <p class="muted" style="font-size:.84rem">Example figures. Time to first contact is tracked for every lead.</p>
+    </div>
+    <div class="panel"><h3>Measured for speed</h3>
+      <p>The lead inbox and the weekly review show median time to first contact, leads not contacted within the target, and conversion by owner, so slow follow-up is visible early.</p>
     </div>
   </div>
 </section>
@@ -478,12 +493,12 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
             <div class="mh"><h4>Lead inbox</h4><div class="row"><span class="chip on">New · 12</span><span class="chip">Assigned to me · 4</span><span class="chip">Possible duplicates · 2</span><span class="chip">Source ▾</span><span class="chip">Campaign ▾</span></div></div>
             <div class="kpis">
               <div class="kpi"><span>Leads this week</span><b>38</b><small class="muted">Website 17 · Forms 15 · Other 6</small></div>
-              <div class="kpi"><span>First response</span><b>3.2 h</b><small class="up">▼ from 7.5 h</small></div>
+              <div class="kpi"><span>Median first contact</span><b>22 min</b><small class="up">Target 30 min</small></div>
               <div class="kpi"><span>Converted to deals</span><b>11</b><small class="muted">29% this week</small></div>
               <div class="kpi"><span>Discarded</span><b>6</b><small class="muted">4 spam · 2 job seekers</small></div>
             </div>
             <div class="inbox">
-              <div class="lead new"><div><b>R. Mehta · Coastal Marine Foods</b><small>Website · Contact page · 18 min ago</small><small>google / cpc / seafood-testing</small></div><div>"Need export testing for frozen shrimp, histamine and antibiotic residues, about 40 samples a month."<small>Analytical Testing · auto-assigned to VK (export rule)</small></div><div class="acts"><span class="btn pri">Convert to deal</span><span class="btn">Discard</span></div></div>
+              <div class="lead new"><div><b>R. Mehta · Coastal Marine Foods</b><small>Website · Contact page · 18 min ago</small><small>google / cpc / seafood-testing</small></div><div>"Need export testing for frozen shrimp, histamine and antibiotic residues, about 40 samples a month."<small>Analytical Testing · assigned to VK in 2 s (export rule) · push + email sent</small><small><span class="pill p-warn">Not contacted · 18 min</span></small></div><div class="acts"><span class="btn pri">Convert to deal</span><span class="btn">Discard</span></div></div>
               <div class="lead new"><div><b>S. Kaur · Metro Bakers</b><small>Google Form · FoSTaC Oct campaign · 1 h ago</small></div><div>"Want FoSTaC Basic for 25 food handlers at our Noida unit."<small><span class="pill p-warn">Possible match: Metro Bakers (existing customer)</span></small></div><div class="acts"><span class="btn pri">Add to Metro Bakers</span><span class="btn">Not a match</span></div></div>
               <div class="lead"><div><b>A. Iyer · Pure Pantry Retail</b><small>Exhibition QR · Food Expo 2026 · yesterday</small></div><div>"Private-label snacks, need label claim verification."<small>Analytical Testing · assigned to SM · called, follow-up 08 Oct</small></div><div class="acts"><span class="btn pri">Convert to deal</span></div></div>
               <div class="lead"><div><b>Unknown sender</b><small>Website · Contact page · yesterday</small></div><div>"Best SEO services at cheap price…"<small>Flagged by spam check</small></div><div class="acts"><span class="pill p-bad">Spam</span></div></div>
@@ -535,7 +550,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
               <div class="kpi"><span>Business · FY 26-27</span><b>₹18.4 L</b></div>
               <div class="kpi"><span>Open deals</span><b>2 · ₹6.1 L</b></div>
               <div class="kpi"><span>Outstanding</span><b style="color:var(--warn)">₹2.7 L</b></div>
-              <div class="kpi"><span>Last booking</span><b>28 Sep</b></div>
+              <div class="kpi"><span>Last order</span><b>28 Sep</b></div>
             </div>
             <div class="subtabs"><span>Overview</span><span>Deals</span><span>Orders &amp; billing</span><span class="on">Files · 64</span><span>Contacts</span><span>Timeline</span></div>
             <div class="folders">
@@ -560,10 +575,10 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
         <!-- O2C -->
         <div class="screen" id="s-o2c" role="tabpanel" aria-labelledby="t-o2c" hidden>
           <div class="stack">
-            <div class="mh"><h4>Order-to-cash</h4><div class="row"><span class="chip on">All</span><span class="chip">Booking</span><span class="chip">Reports &amp; billing</span><span class="chip">Payments</span></div></div>
+            <div class="mh"><h4>Order-to-cash</h4><div class="row"><span class="chip on">All</span><span class="chip">Orders</span><span class="chip">Reports &amp; billing</span><span class="chip">Payments</span></div></div>
             <div class="kpis">
-              <div class="kpi"><span>Booked, not reported</span><b>₹7.9 L</b><small class="muted">23 bookings</small></div>
-              <div class="kpi"><span>Reported, not billed</span><b style="color:var(--warn)">₹3.4 L</b><small class="muted">5 bookings</small></div>
+              <div class="kpi"><span>Booked, not reported</span><b>₹7.9 L</b><small class="muted">23 orders</small></div>
+              <div class="kpi"><span>Reported, not billed</span><b style="color:var(--warn)">₹3.4 L</b><small class="muted">5 orders</small></div>
               <div class="kpi"><span>Billed, unpaid</span><b>₹61.2 L</b><small class="muted">DSO 64 days</small></div>
               <div class="kpi"><span>Promised this week</span><b>₹8.3 L</b><small class="muted">6 invoices</small></div>
             </div>
@@ -575,12 +590,12 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
               <div class="legend"><span><i style="background:var(--ok)"></i>Not due ₹13.5 L</span><span><i style="background:var(--accent)"></i>0–30 ₹17.1 L</span><span><i style="background:var(--money)"></i>31–60 ₹12.9 L</span><span><i style="background:var(--warn)"></i>61–90 ₹8.3 L</span><span><i style="background:var(--bad)"></i>90+ ₹9.4 L</span></div>
             </div>
             <div class="tablewrap"><table>
-              <thead><tr><th>Customer · deal</th><th>Progress</th><th>Booking</th><th>Reports</th><th>Invoice</th><th class="r">Pending</th><th>Next follow-up</th></tr></thead>
+              <thead><tr><th>Customer · deal</th><th>Progress</th><th>Order · samples</th><th>Reported</th><th>Invoice</th><th class="r">Pending</th><th>Next follow-up</th></tr></thead>
               <tbody>
-                <tr><td>Metro Bakers<br><span class="muted" style="font-size:.78rem">Bread shelf-life study</span></td><td><span class="o2c-steps" title="Booked, reported, billed, overdue"><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i></span></td><td class="mono">BK-26-04117</td><td>8 / 8</td><td class="mono">FRAC/26-27/1182</td><td class="r num">₹1.20 L</td><td><span class="pill p-bad">47 d overdue</span> <span class="pill p-money">Promised 06 Oct</span></td></tr>
-                <tr><td>Sunrise Dairy<br><span class="muted" style="font-size:.78rem">Ghee monthly testing</span></td><td><span class="o2c-steps"><i class="d"></i><i class="d"></i><i class="h"></i><i></i></span></td><td class="mono">BK-26-04302</td><td>12 / 12</td><td><span class="pill p-warn">Not billed · 4 d</span></td><td class="r num">—</td><td class="muted">Ask Accounts to bill</td></tr>
-                <tr><td>Pure Pantry Retail<br><span class="muted" style="font-size:.78rem">FSMS consultancy</span></td><td><span class="o2c-steps"><i class="d"></i><i class="h"></i><i></i><i></i></span></td><td class="mono">BK-26-04355</td><td>Stage 1 of 3</td><td class="muted">—</td><td class="r num">—</td><td class="num">14 Oct · review visit</td></tr>
-                <tr><td>Annapurna Foods<br><span class="muted" style="font-size:.78rem">Spices FSSAI panel</span></td><td><span class="o2c-steps"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i></span></td><td class="mono">BK-26-03988</td><td>5 / 5</td><td class="mono">FRAC/26-27/1094</td><td class="r num"><span class="pill p-ok">Paid</span></td><td class="muted">—</td></tr>
+                <tr><td>Metro Bakers<br><span class="muted" style="font-size:.78rem">Bread shelf-life study</span></td><td><span class="o2c-steps" title="Booked, reported, billed, overdue"><i class="d"></i><i class="d"></i><i class="d"></i><i class="x"></i></span></td><td><span class="mono">ORD-26-04117</span><br><span class="muted" style="font-size:.76rem">Bread × 8</span></td><td>8 / 8</td><td class="mono">FRAC/26-27/1182</td><td class="r num">₹1.20 L</td><td><span class="pill p-bad">47 d overdue</span> <span class="pill p-money">Promised 06 Oct</span></td></tr>
+                <tr><td>Sunrise Dairy<br><span class="muted" style="font-size:.78rem">Ghee monthly testing</span></td><td><span class="o2c-steps"><i class="d"></i><i class="d"></i><i class="h"></i><i></i></span></td><td><span class="mono">ORD-26-04302</span><br><span class="muted" style="font-size:.76rem">Ghee × 6 · Butter × 6</span></td><td>12 / 12</td><td><span class="pill p-warn">Not billed · 4 d</span></td><td class="r num">—</td><td class="muted">Ask Accounts to bill</td></tr>
+                <tr><td>Pure Pantry Retail<br><span class="muted" style="font-size:.78rem">FSMS consultancy</span></td><td><span class="o2c-steps"><i class="d"></i><i class="h"></i><i></i><i></i></span></td><td><span class="mono">ORD-26-04355</span><br><span class="muted" style="font-size:.76rem">Audit visits × 3</span></td><td>Stage 1 of 3</td><td class="muted">—</td><td class="r num">—</td><td class="num">14 Oct · review visit</td></tr>
+                <tr><td>Annapurna Foods<br><span class="muted" style="font-size:.78rem">Spices FSSAI panel</span></td><td><span class="o2c-steps"><i class="d"></i><i class="d"></i><i class="d"></i><i class="d"></i></span></td><td><span class="mono">ORD-26-03988</span><br><span class="muted" style="font-size:.76rem">Chilli powder × 3 · Turmeric × 2</span></td><td>5 / 5</td><td class="mono">FRAC/26-27/1094</td><td class="r num"><span class="pill p-ok">Paid</span></td><td class="muted">—</td></tr>
               </tbody></table></div>
             <div class="legend"><span><i style="background:var(--ok)"></i>Done</span><span><i style="background:var(--money)"></i>In progress</span><span><i style="background:var(--bad)"></i>Overdue</span><span>Steps: Booked · Reported · Billed · Paid</span></div>
           </div>
@@ -715,7 +730,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
 <section id="data">
   <header>
     <span class="eyebrow">Data model</span>
-    <h2>Fourteen tables, named the way the team already talks</h2>
+    <h2>Fifteen tables, named the way the team already talks</h2>
     <p class="muted">Fields marked <span class="pill p-info">LIMS</span> or <span class="pill p-money">Tally</span> are written only by uploads. Everything else is entered in the portal.</p>
   </header>
   <div class="tablewrap"><table>
@@ -727,11 +742,12 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
       <tr><td><b>Campaign</b></td><td>A push to generate leads</td><td>Name, channel (website, Google Form, event, ad, email), dates, forms, spend (optional)</td></tr>
       <tr><td><b>Deal</b></td><td>One business proposition</td><td>Title, customer, service, campaign (if any), business type (New / Repeat / New service / Renewal / Tender), source, stage, estimated value, probability, expected close month, owner, next step + date, enquiry / quotation reference (optional, free text), lost reason, PO / LOI no.</td></tr>
       <tr><td><b>Activity</b></td><td>Calls, visits, emails, notes on a deal or customer</td><td>Type, date, note, who, outcome</td></tr>
-      <tr><td><b>Booking</b></td><td>Work booked after a win; a rate-contract deal can have many</td><td><span class="pill p-info">LIMS</span> booking no., date, samples, booked value, report due date, reports delivered / total, last report date · <i>linked deal (set once, remembered)</i></td></tr>
-      <tr><td><b>Invoice</b></td><td>A bill raised in Tally</td><td><span class="pill p-money">Tally</span> invoice no., date, party name, amount incl. GST, due date, pending amount, overdue days · <i>linked booking / deal</i></td></tr>
+      <tr><td><b>Order</b></td><td>Work booked after a win; a rate-contract deal can have many</td><td><span class="pill p-info">Order sheet</span> order no., order date, customer, order value, report due date · <span class="pill p-info">Report status sheet</span> report status, samples reported / total, last report date · <i>linked deal (set once, remembered)</i></td></tr>
+      <tr><td><b>Order line</b></td><td>What an order contains, by sample name. No individual sample IDs.</td><td><span class="pill p-info">Order sheet</span> sample name, number of samples · <span class="pill p-info">Report status sheet</span> samples reported, when the sheet gives it per sample name</td></tr>
+      <tr><td><b>Invoice</b></td><td>A bill raised in Tally</td><td><span class="pill p-money">Tally</span> invoice no., date, party name, amount incl. GST, due date, pending amount, overdue days · <i>linked order / deal</i></td></tr>
       <tr><td><b>Payment</b></td><td>Money received (from receipt register, or inferred from the pending amount)</td><td><span class="pill p-money">Tally</span> date, amount, invoice, mode / reference</td></tr>
       <tr><td><b>Collection follow-up</b></td><td>Chasing an invoice</td><td>Date, contact, note, promised amount + date, status (Not due / Due / Overdue / Promised / Disputed / Paid), next follow-up</td></tr>
-      <tr><td><b>File</b></td><td>Anything in the vault</td><td>Customer, folder, optional deal / booking / invoice, uploaded by, date, version</td></tr>
+      <tr><td><b>File</b></td><td>Anything in the vault</td><td>Customer, folder, optional deal / order / invoice, uploaded by, date, version</td></tr>
       <tr><td><b>Saved list</b></td><td>A named grid view</td><td>Record type, filters, sort, columns, personal or shared</td></tr>
       <tr><td><b>Upload batch</b></td><td>One sheet upload and every row in it, as received</td><td>Source, layout used, file, counts (new / changed / unchanged / attention), applied by, undo status</td></tr>
       <tr><td><b>Change log</b></td><td>Who changed what, when and from where</td><td>Record, field, old → new, user, channel (portal / upload / Claude / ChatGPT)</td></tr>
@@ -745,7 +761,8 @@ flowchart LR
   C[Customer] --> D
   C --> K[Contact]
   D --> A[Activity]
-  D --> B[Booking]
+  D --> B[Order]
+  B --> S[Order line]
   B --> I[Invoice]
   C --> I
   I --> P[Payment]
@@ -779,9 +796,10 @@ flowchart LR
     <thead><tr><th>Source sheet</th><th>Matched on</th><th>Updates</th><th>How often</th></tr></thead>
     <tbody>
       <tr><td><b>Personal Google Sheets</b> (each person's own lead or follow-up tracker)</td><td>Customer name, GSTIN, phone or email</td><td>Customers, contacts, deals and their latest remarks</td><td>Once per sheet</td></tr>
-      <tr><td><b>Campaign response sheets</b> (Google Forms responses)</td><td>Response timestamp + email</td><td>New rows become inbound leads</td><td>Every 15 minutes, while the campaign runs</td></tr>
+      <tr><td><b>Campaign response sheets</b> (Google Forms responses)</td><td>Response timestamp + email</td><td>Fallback only, for a form that cannot send responses instantly</td><td>Every 15 minutes, while the campaign runs</td></tr>
       <tr><td><b>Customer list</b> (LIMS customer list or Tally ledger list)</td><td>GSTIN, then the system's customer code, then a remembered name</td><td>Customers (new ones added, codes and GSTIN filled in)</td><td>Monthly</td></tr>
-      <tr><td><b>LIMS / booking register</b></td><td>Booking no.</td><td>Bookings, samples, booked value, report status and dates</td><td>Daily or weekly</td></tr>
+      <tr><td><b>Order booking sheet</b> (from the booking software; one row per sample name in an order)</td><td>Order no., then sample name</td><td>Orders and their lines: sample name, number of samples, order value, dates</td><td>Daily</td></tr>
+      <tr><td><b>Report status sheet</b> (a separate export)</td><td>Order no., plus sample name if the sheet has it</td><td>Report status, samples reported, report dates. Never changes order or sample details.</td><td>Daily</td></tr>
       <tr><td><b>Tally · Sales Register</b></td><td>Voucher / invoice no.</td><td>Invoices raised: number, date, party, amount</td><td>Weekly</td></tr>
       <tr><td><b>Tally · Bills Receivable</b> (Date, Ref. No., Party's Name, Pending Amount, Due on, Overdue by days)</td><td>Ref. no.</td><td>Pending amount and overdue days; invoices missing from a full snapshot become Paid</td><td>Weekly, or before each collections review</td></tr>
       <tr><td><b>Tally · Receipt Register</b> (optional)</td><td>Invoice ref. in the bill-wise details</td><td>Payment dates and amounts</td><td>Weekly</td></tr>
@@ -789,9 +807,9 @@ flowchart LR
   <div class="grid3">
     <div class="panel"><h3>Recognises the file</h3><p>The upload reads the header row and picks the saved layout for that source. A new layout is mapped once by dragging columns onto fields, then saved for everyone.</p></div>
     <div class="panel"><h3>Shows changes before saving</h3><p>New, changed, unchanged and needs-attention rows are counted and listed field by field. Nothing is written until someone clicks Apply.</p></div>
-    <div class="panel"><h3>Each field has one owner</h3><p>Tally owns invoice amounts and pending balances. LIMS owns booking and report facts. People own stages, notes, owners and follow-ups. An upload never overwrites a field it does not own.</p></div>
+    <div class="panel"><h3>Each field has one owner</h3><p>Tally owns invoice amounts and pending balances. The order sheet owns order and sample details; the report status sheet owns report progress. People own stages, notes, owners and follow-ups. An upload never overwrites a field it does not own.</p></div>
     <div class="panel"><h3>Learns customer names</h3><p>When Tally says "SUNRISE DAIRY PVT. LTD. (HO)", the user picks the customer once and the alias is remembered. GSTIN is used to match when the sheet has it.</p></div>
-    <div class="panel"><h3>Links money to deals</h3><p>An invoice is linked to a booking by booking no. or PO no. when the sheet carries it, otherwise suggested from the same customer's recent bookings for one-click confirmation.</p></div>
+    <div class="panel"><h3>Links money to deals</h3><p>An invoice is linked to an order by order no. or PO no. when the sheet carries it, otherwise suggested from the same customer's recent orders for one-click confirmation.</p></div>
     <div class="panel"><h3>Keeps a full trail</h3><p>The raw file and every row are stored exactly as received, before any record is updated. Any batch can be undone for 30 days.</p></div>
   </div>
   <div class="grid2">
@@ -807,6 +825,16 @@ flowchart LR
       <p>The sheet is marked with the import date, and from an agreed date it becomes read-only for reference. Keeping it in use would mean two versions of the truth. Anyone who still prefers rows and columns gets the same feel in the tracker's grid view.</p>
       <p class="muted" style="font-size:.86rem">Google access runs through an app registered as Internal in FRAC's Google Workspace, so only fraclabs.org accounts can use it.</p>
     </div>
+  </div>
+  <div class="panel">
+    <h3>Order and report status: two sheets, one key</h3>
+    <ul class="tight">
+      <li>Both sheets carry the same order no., so they are uploaded separately, whenever each is ready, and meet on the same order.</li>
+      <li>An order with several sample names arrives as several rows with the same order no.; the tracker groups them into one order with one line per sample name, e.g. Ghee × 6 and Butter × 6.</li>
+      <li>No sample IDs are needed. Report progress is counted per order, or per sample name when the report sheet gives it.</li>
+      <li>A report row for an order not uploaded yet is held, shown under Needs attention, and applied automatically when the order arrives.</li>
+      <li>A report row naming a sample the order does not contain is flagged rather than guessed.</li>
+    </ul>
   </div>
   <div class="callout"><p><b>Snapshot rule:</b> a Bills Receivable export is treated as the complete list of open invoices on that date. An invoice that was open last time and is missing now is shown as "will be marked Paid" in the preview. The user can untick any row before applying, so a partial export never closes invoices by mistake.</p></div>
 </section>
@@ -824,7 +852,7 @@ flowchart LR
       <div class="tablewrap" style="border:0"><table>
         <tbody>
           <tr><td class="mono">find_customers</td><td>Search by name, LIMS ID or GSTIN</td></tr>
-          <tr><td class="mono">get_customer_summary</td><td>Deals, bookings, outstanding, last activity, file list</td></tr>
+          <tr><td class="mono">get_customer_summary</td><td>Deals, orders, outstanding, last activity, file list</td></tr>
           <tr><td class="mono">list_lead_inbox</td><td>New and unassigned leads, by source or campaign</td></tr>
           <tr><td class="mono">list_pipeline</td><td>Filter by owner, stage, service, new / existing, close month</td></tr>
           <tr><td class="mono">list_my_followups</td><td>Today, overdue and this week, deals and payments</td></tr>
@@ -958,10 +986,21 @@ flowchart LR
     <h2>Five phases, each usable on its own</h2>
     <p class="muted">Indicative timing for one developer working with Claude Code. Each phase ends with something the team uses for real work before the next starts.</p>
   </header>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Milestone</th><th>What the team can do</th><th>Ready by</th></tr></thead>
+    <tbody>
+      <tr><td><b>Clickable prototype</b></td><td>Click through every screen with sample data and agree changes</td><td class="num">End of week 1</td></tr>
+      <tr><td><b>Working model</b></td><td>Sign in, import the customer list and personal sheets, run the pipeline on board and grid, store files, work the Today list</td><td class="num">End of week 4</td></tr>
+      <tr><td><b>Live lead capture</b></td><td>Website and Google Forms leads arrive in seconds, assigned and alerted, with the response clock running</td><td class="num">End of week 6</td></tr>
+      <tr><td><b>Order-to-cash</b></td><td>Order, report status and Tally uploads; collections calling mode</td><td class="num">End of week 9</td></tr>
+      <tr><td><b>Claude and ChatGPT</b></td><td>The connector live in both</td><td class="num">End of week 11</td></tr>
+    </tbody></table></div>
+  <div class="callout"><p><b>If instant website leads matter most,</b> lead capture can move ahead of the grid and sheet import. A working model with live, auto-assigned website leads would then be ready by about the end of week 5, and the grid and sheet import would follow by week 7. The total stays about 11 weeks.</p></div>
+  <p class="muted" style="font-size:.86rem">Assumes sample sheets and access to the website's form settings in week 1, a FRAC reviewer who responds within two working days, and sheet formats without major surprises. Each of these can add a week if it slips.</p>
   <div class="phases">
     <div class="ph"><div class="when"><b>Phase 0</b><span class="mono muted">Week 1</span></div>
       <div class="body"><p>Collect the sample sheets and confirm the decisions below. Turn these mockups into a clickable prototype and walk the sales and accounts teams through it.</p>
-      <div class="exit"><b>Done when:</b> stages, fields and roles are signed off, and sample LIMS and Tally exports are in hand.</div></div></div>
+      <div class="exit"><b>Done when:</b> stages, fields and roles are signed off, and sample order, report status and Tally sheets are in hand.</div></div></div>
     <div class="ph"><div class="when"><b>Phase 1</b><span class="mono muted">Weeks 2–4</span><span class="pill p-acc" style="justify-self:start">Pipeline</span></div>
       <div class="body"><p>Sign-in and roles; customers and contacts; deals with board and grid views; saved lists; activities and next steps; Today screen; file vault with bulk upload; import of personal Google Sheets and the current lead tracker.</p>
       <div class="exit"><b>Done when:</b> the weekly sales review runs from the portal and the personal sheets are imported and set to read-only.</div></div></div>
@@ -969,8 +1008,8 @@ flowchart LR
       <div class="body"><p>Lead inbox; form endpoint for the website; Google Forms connection; webhook for other form tools; campaigns; spam and duplicate checks; assignment rules; acknowledgement email; campaign report.</p>
       <div class="exit"><b>Done when:</b> website and campaign leads arrive in the inbox without anyone typing them.</div></div></div>
     <div class="ph"><div class="when"><b>Phase 3</b><span class="mono muted">Weeks 7–9</span><span class="pill p-money" style="justify-self:start">Order-to-cash</span></div>
-      <div class="body"><p>Bookings, invoices, payments and collection follow-ups; the upload engine with saved layouts, change preview, name matching and undo; order-to-cash screen; calling mode for collections; alerts; collections review.</p>
-      <div class="exit"><b>Done when:</b> Accounts uploads the Tally reports weekly and the collections team works its call lists in the portal.</div></div></div>
+      <div class="body"><p>Orders with sample lines, report status, invoices, payments and collection follow-ups; the upload engine with saved layouts, change preview, name matching and undo; order-to-cash screen; calling mode for collections; alerts; collections review.</p>
+      <div class="exit"><b>Done when:</b> order and report status sheets are uploaded daily, Accounts uploads the Tally reports weekly, and the collections team works its call lists in the portal.</div></div></div>
     <div class="ph"><div class="when"><b>Phase 4</b><span class="mono muted">Weeks 10–11</span><span class="pill p-info" style="justify-self:start">AI access</span></div>
       <div class="body"><p>The <span class="mono">/mcp</span> connector with read and write tools; sign-in through Supabase OAuth; set up in Claude and in ChatGPT; daily digest email.</p>
       <div class="exit"><b>Done when:</b> a salesperson can list and log follow-ups from Claude or ChatGPT, and the change log shows the channel.</div></div></div>
@@ -988,7 +1027,7 @@ flowchart LR
   <div class="decisions">
     <div class="decision"><h3>1. Stack</h3><p class="rec"><b>Recommendation:</b> Next.js + Supabase as above. The alternative is a Streamlit app plus a separate small Python service for the connector and a hosted database; it is quicker to start but harder to make polished and needs two deployments.</p></div>
     <div class="decision"><h3>2. Who sees what</h3><p class="rec"><b>Recommendation:</b> everyone sees every customer and deal; people edit their own deals. Say if any team needs restricted visibility.</p></div>
-    <div class="decision"><h3>3. The booking software</h3><p class="rec">Which software is used for order booking (LIMS or another)? A sample export with the column headers is needed, including booking no., customer, sample count, value and report status.</p></div>
+    <div class="decision"><h3>3. Order and report status sheets</h3><p class="rec">A sample of each export with its column headers. Order sheet: order no., order date, customer, sample name, number of samples, value. Report status sheet: order no., sample name if available, samples reported, status, report date.</p></div>
     <div class="decision"><h3>4. Tally exports</h3><p class="rec">Samples of the Sales Register and Bills Receivable exports as Accounts produces them today. Confirm that bill-wise details are maintained for customer ledgers, which Bills Receivable depends on.</p></div>
     <div class="decision"><h3>5. Claude and ChatGPT plans</h3><p class="rec">Which plans FRAC holds. Claude Team or Enterprise and ChatGPT Business or Enterprise allow organisation-wide connectors with write actions; personal plans have limits.</p></div>
     <div class="decision"><h3>6. File storage</h3><p class="rec"><b>Recommendation:</b> files stored inside the portal (private, searchable, linked to deals), with an optional Google Drive folder link per customer for existing folders. Bulk-import old files by zip.</p></div>
@@ -1033,7 +1072,7 @@ flowchart LR
     "s-grid":["Any list opens as a grid. Filter it, save it as a list, then work through it in calling mode, updating status and remarks as you go.","order-to-cash/grid?list=overdue-30-north"],
     "s-pipe":["Pipeline shows every open deal as a board by stage. Filters cover owner, service, new or existing, sector and close date.","pipeline"],
     "s-acct":["Each customer has one page: business to date, open deals, orders and billing, contacts, a timeline and the file vault.","customers/sunrise-dairy"],
-    "s-o2c":["Order-to-cash follows each won deal through booking, reports, billing and payment, with ageing from the latest Tally upload.","order-to-cash"],
+    "s-o2c":["Order-to-cash follows each won deal through order booking, reports, billing and payment, with ageing from the latest Tally upload.","order-to-cash"],
     "s-sync":["Uploading a sheet shows exactly what will change before anything is saved.","upload"],
     "s-chat":["The same data and a few safe actions, available from Claude or ChatGPT through the connector.","—"]
   };
