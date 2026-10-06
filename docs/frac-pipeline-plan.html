@@ -282,7 +282,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
 <div class="hero">
   <div class="meta">
     <span class="pill p-acc">Plan for review</span>
-    <span class="pill p-line">Version 5 · 6 Oct 2026</span>
+    <span class="pill p-line">Version 6 · 6 Oct 2026</span>
     <span class="pill p-line">Nothing built yet</span>
   </div>
   <h1>FRAC Pipeline: lead to collected payment, in one place</h1>
@@ -930,6 +930,22 @@ flowchart LR
     <div class="panel"><h3>Access</h3><p>Google sign-in limited to the fraclabs.org domain. Roles: Sales, Leadership, Accounts, Admin. Enforced in the database, so the connector cannot see more than the portal.</p></div>
     <div class="panel"><h3>Data safety</h3><p>Hosted in India (Mumbai). Private repository; no customer data in git. Daily backups, signed time-limited links for files, full change log.</p></div>
     <div class="panel"><h3>Running cost</h3><p>About US$45 a month (≈ ₹4,000): Supabase Pro $25 and one Vercel Pro seat $20. Viewers need no seat. Turnstile spam protection is free. Claude or ChatGPT plans, and Zapier or Make for ad forms, are separate.</p></div>
+  </div>
+  <h3 style="margin-top:8px">Where it runs</h3>
+  <p class="muted">The GitHub repository holds the code. To be used, the app is installed on cloud hosting. The same code can run in either of two ways.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th></th><th>Managed services (recommended)</th><th>FRAC's own cloud server</th></tr></thead>
+    <tbody>
+      <tr><td><b>What it is</b></td><td>Vercel runs the app; Supabase runs the database, sign-in and files. Both in Mumbai.</td><td>One virtual server on AWS (Mumbai), Azure (Central India), Google Cloud (Mumbai) or an Indian provider, running the app, database and file storage in Docker</td></tr>
+      <tr><td><b>Setup</b></td><td>Connect the GitHub repository once; every approved change goes live by itself</td><td>Install Docker, the HTTPS certificate, backups and monitoring</td></tr>
+      <tr><td><b>Upkeep</b></td><td>The providers patch, back up and scale it</td><td>FRAC's IT patches the server, checks backups and watches uptime</td></tr>
+      <tr><td><b>Monthly cost</b></td><td class="num">About US$45</td><td class="num">About US$30–60 for the server, plus backup storage and IT time</td></tr>
+      <tr><td><b>Best when</b></td><td>Nobody at FRAC should have to look after servers</td><td>IT policy requires FRAC-controlled infrastructure, or FRAC already has cloud credits</td></tr>
+    </tbody></table></div>
+  <div class="grid3">
+    <div class="panel"><h3>Portable from day one</h3><p>A Docker setup ships with the code, the database is standard PostgreSQL, and files sit behind a storage layer that works with Supabase or any S3-compatible bucket. Supabase itself can be self-hosted. Moving from managed hosting to FRAC's own server later means copying the database and files and changing settings, not rewriting the app.</p></div>
+    <div class="panel"><h3>Test and live copies</h3><p>A test copy is set up with the Foundation module, so each module can be reviewed on a real web address. The live copy, with the team's real data, opens at rollout. Both run from the same repository.</p></div>
+    <div class="panel"><h3>Must be on the public internet</h3><p>Website forms and the Claude and ChatGPT connector reach the tracker over the internet, so it cannot sit only on the office network. It gets an address such as pipeline.fraclabs.org (one DNS record), HTTPS, and sign-in limited to fraclabs.org accounts.</p></div>
   </div>
 </section>
 
