@@ -282,7 +282,7 @@ table.xl td .dd{display:inline-flex;gap:4px;align-items:center}
 <div class="hero">
   <div class="meta">
     <span class="pill p-acc">Plan for review</span>
-    <span class="pill p-line">Version 4 · 6 Oct 2026</span>
+    <span class="pill p-line">Version 5 · 6 Oct 2026</span>
     <span class="pill p-line">Nothing built yet</span>
   </div>
   <h1>FRAC Pipeline: lead to collected payment, in one place</h1>
@@ -983,39 +983,50 @@ flowchart LR
 <section id="phases">
   <header>
     <span class="eyebrow">Delivery</span>
-    <h2>Five phases, each usable on its own</h2>
-    <p class="muted">Indicative timing for one developer working with Claude Code. Each phase ends with something the team uses for real work before the next starts.</p>
+    <h2>Built by Claude, module by module</h2>
+    <p class="muted">Claude writes the code, tests each module against a local database and a real browser, then pushes it to FRAC's GitHub repository. FRAC reviews each module before the next one starts. The coding is measured in hours; the calendar is set mostly by review time, sample data and account setup.</p>
   </header>
   <div class="tablewrap"><table>
-    <thead><tr><th>Milestone</th><th>What the team can do</th><th>Ready by</th></tr></thead>
+    <thead><tr><th>#</th><th>Module</th><th>What it delivers</th><th class="r">Claude's build time</th><th>Needs from FRAC</th></tr></thead>
     <tbody>
-      <tr><td><b>Clickable prototype</b></td><td>Click through every screen with sample data and agree changes</td><td class="num">End of week 1</td></tr>
-      <tr><td><b>Working model</b></td><td>Sign in, import the customer list and personal sheets, run the pipeline on board and grid, store files, work the Today list</td><td class="num">End of week 4</td></tr>
-      <tr><td><b>Live lead capture</b></td><td>Website and Google Forms leads arrive in seconds, assigned and alerted, with the response clock running</td><td class="num">End of week 6</td></tr>
-      <tr><td><b>Order-to-cash</b></td><td>Order, report status and Tally uploads; collections calling mode</td><td class="num">End of week 9</td></tr>
-      <tr><td><b>Claude and ChatGPT</b></td><td>The connector live in both</td><td class="num">End of week 11</td></tr>
+      <tr><td class="mono">0</td><td><b>Clickable prototype</b></td><td>Every screen with sample data, to agree look and flow before real data</td><td class="r num">3–4 h</td><td>One review session</td></tr>
+      <tr><td class="mono">1</td><td><b>Foundation</b></td><td>Project, design system, Google sign-in for fraclabs.org, roles, database, change log, deployment</td><td class="r num">4–6 h</td><td>Supabase and Vercel accounts; a Google sign-in client</td></tr>
+      <tr><td class="mono">2</td><td><b>Customers and contacts</b></td><td>Customer list and pages, contacts, duplicate warnings, customer list import</td><td class="r num">3–4 h</td><td>Best available customer list</td></tr>
+      <tr><td class="mono">3</td><td><b>Pipeline and Today</b></td><td>Deals, board and list, stages, activities, next steps, Today screen, morning digest</td><td class="r num">5–7 h</td><td>Stage names, services, lost reasons</td></tr>
+      <tr><td class="mono">4</td><td><b>Lead capture</b></td><td>Lead inbox, website form endpoint, Google Forms script, spam and duplicate checks, instant assignment, push and email alerts, response clock, campaigns</td><td class="r num">6–8 h</td><td>Access to the website's form settings (or the web agency); assignment rules; an email sending account</td></tr>
+      <tr><td class="mono">5</td><td><b>File vault</b></td><td>Folders per customer, upload, link to deals and orders, bulk zip import</td><td class="r num">2–3 h</td><td>A sample of old files</td></tr>
+      <tr><td class="mono">6</td><td><b>Grid and saved lists</b></td><td>Spreadsheet-style grid on every list, copy-paste, bulk edit, saved lists, export</td><td class="r num">5–7 h</td><td>—</td></tr>
+      <tr><td class="mono">7</td><td><b>Google Sheets import</b></td><td>File picker, column and status mapping, amount and date cleaning, merge of duplicates across sheets</td><td class="r num">5–7 h</td><td>Two or three real personal sheets</td></tr>
+      <tr><td class="mono">8</td><td><b>Order-to-cash and uploads</b></td><td>Orders with sample lines, report status, invoices, payments; upload engine with saved layouts, change preview and undo; Tally snapshot rule</td><td class="r num">8–10 h</td><td>Order sheet, report status sheet, Tally Sales Register and Bills Receivable samples</td></tr>
+      <tr><td class="mono">9</td><td><b>Collections and reviews</b></td><td>Calling mode, alerts, weekly sales and monthly collections reviews</td><td class="r num">4–6 h</td><td>—</td></tr>
+      <tr><td class="mono">10</td><td><b>Claude and ChatGPT connector</b></td><td>The /mcp endpoint, sign-in, read and write tools, tested from both assistants</td><td class="r num">4–6 h</td><td>A Claude Team/Enterprise owner and a ChatGPT Business admin to add the connector</td></tr>
+      <tr><td class="mono">11</td><td><b>Hardening and rollout</b></td><td>Database permissions, security review, phone layout pass, end-to-end tests, short user guide</td><td class="r num">4–6 h</td><td>A few users for a trial week</td></tr>
+      <tr><td></td><td><b>Total</b></td><td></td><td class="r num"><b>53–74 h</b></td><td></td></tr>
     </tbody></table></div>
-  <div class="callout"><p><b>If instant website leads matter most,</b> lead capture can move ahead of the grid and sheet import. A working model with live, auto-assigned website leads would then be ready by about the end of week 5, and the grid and sheet import would follow by week 7. The total stays about 11 weeks.</p></div>
-  <p class="muted" style="font-size:.86rem">Assumes sample sheets and access to the website's form settings in week 1, a FRAC reviewer who responds within two working days, and sheet formats without major surprises. Each of these can add a week if it slips.</p>
-  <div class="phases">
-    <div class="ph"><div class="when"><b>Phase 0</b><span class="mono muted">Week 1</span></div>
-      <div class="body"><p>Collect the sample sheets and confirm the decisions below. Turn these mockups into a clickable prototype and walk the sales and accounts teams through it.</p>
-      <div class="exit"><b>Done when:</b> stages, fields and roles are signed off, and sample order, report status and Tally sheets are in hand.</div></div></div>
-    <div class="ph"><div class="when"><b>Phase 1</b><span class="mono muted">Weeks 2–4</span><span class="pill p-acc" style="justify-self:start">Pipeline</span></div>
-      <div class="body"><p>Sign-in and roles; customers and contacts; deals with board and grid views; saved lists; activities and next steps; Today screen; file vault with bulk upload; import of personal Google Sheets and the current lead tracker.</p>
-      <div class="exit"><b>Done when:</b> the weekly sales review runs from the portal and the personal sheets are imported and set to read-only.</div></div></div>
-    <div class="ph"><div class="when"><b>Phase 2</b><span class="mono muted">Weeks 5–6</span><span class="pill p-acc" style="justify-self:start">Lead capture</span></div>
-      <div class="body"><p>Lead inbox; form endpoint for the website; Google Forms connection; webhook for other form tools; campaigns; spam and duplicate checks; assignment rules; acknowledgement email; campaign report.</p>
-      <div class="exit"><b>Done when:</b> website and campaign leads arrive in the inbox without anyone typing them.</div></div></div>
-    <div class="ph"><div class="when"><b>Phase 3</b><span class="mono muted">Weeks 7–9</span><span class="pill p-money" style="justify-self:start">Order-to-cash</span></div>
-      <div class="body"><p>Orders with sample lines, report status, invoices, payments and collection follow-ups; the upload engine with saved layouts, change preview, name matching and undo; order-to-cash screen; calling mode for collections; alerts; collections review.</p>
-      <div class="exit"><b>Done when:</b> order and report status sheets are uploaded daily, Accounts uploads the Tally reports weekly, and the collections team works its call lists in the portal.</div></div></div>
-    <div class="ph"><div class="when"><b>Phase 4</b><span class="mono muted">Weeks 10–11</span><span class="pill p-info" style="justify-self:start">AI access</span></div>
-      <div class="body"><p>The <span class="mono">/mcp</span> connector with read and write tools; sign-in through Supabase OAuth; set up in Claude and in ChatGPT; daily digest email.</p>
-      <div class="exit"><b>Done when:</b> a salesperson can list and log follow-ups from Claude or ChatGPT, and the change log shows the channel.</div></div></div>
-    <div class="ph"><div class="when"><b>Later</b><span class="mono muted">As needed</span></div>
-      <div class="body"><p>Forms built in the tracker with QR codes for events; hand-off from FORT once it is finished; targets and incentives view; direct read from Tally over its built-in XML interface through a small agent on the Tally PC, replacing the manual Tally upload; WhatsApp or email reminders to customers for overdue invoices.</p></div></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Milestone</th><th>Modules</th><th>Ready in about</th></tr></thead>
+    <tbody>
+      <tr><td><b>Prototype to review</b></td><td>0</td><td class="num">Day 1</td></tr>
+      <tr><td><b>Working model with live website leads</b></td><td>1–4</td><td class="num">1 week</td></tr>
+      <tr><td><b>Files, grid and personal sheet import</b></td><td>5–7</td><td class="num">2 weeks</td></tr>
+      <tr><td><b>Order-to-cash, collections, connector, rollout</b></td><td>8–11</td><td class="num">3 weeks</td></tr>
+    </tbody></table></div>
+  <div class="grid2">
+    <div class="panel"><h3>What sets the pace</h3>
+      <ul class="tight">
+        <li>FRAC's review of each module, ideally within a day</li>
+        <li>Accounts created and keys added to the environment (Claude cannot sign up for services or click through their dashboards)</li>
+        <li>Real sample sheets, so imports are built on actual columns</li>
+        <li>Website changes, if the site is run by an outside agency</li>
+      </ul></div>
+    <div class="panel"><h3>How each module is checked</h3>
+      <ul class="tight">
+        <li>Automated tests for the business rules: assignment, duplicate matching, upload changes, the Tally snapshot rule</li>
+        <li>The screens driven in a real browser at desktop and phone width</li>
+        <li>A short note of what was built, what was tested and what is still open, before FRAC reviews it</li>
+      </ul></div>
   </div>
+  <p class="muted" style="font-size:.86rem">Build times are Claude's estimates of focused working time, not measured yet. Later: forms built in the tracker with QR codes, hand-off from FORT once it is finished, a direct read from Tally, WhatsApp reminders to customers.</p>
 </section>
 
 <!-- ================= DECISIONS ================= -->
@@ -1046,7 +1057,7 @@ flowchart LR
   <div class="tablewrap"><table>
     <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
     <tbody>
-      <tr><td>The team keeps using the old spreadsheet</td><td>Five-field entry, a morning digest that is only useful if the portal is up to date, and the weekly review run from the portal from Phase 1</td></tr>
+      <tr><td>The team keeps using the old spreadsheet</td><td>Five-field entry, a morning digest that is only useful if the portal is up to date, and the weekly review run from the portal from the first week</td></tr>
       <tr><td>Customer names differ across LIMS, Tally and the tracker</td><td>The tracker's own customer record, GSTIN when present, each system's customer code, and remembered aliases picked once per spelling</td></tr>
       <tr><td>An upload changes the wrong records</td><td>Preview before apply, field ownership, untick any row, raw file kept, undo for 30 days</td></tr>
       <tr><td>An assistant makes an unwanted change</td><td>Small set of write tools, no deletes, confirmation on every write, change log with channel</td></tr>
