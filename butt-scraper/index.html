@@ -198,6 +198,7 @@ html, body { height: 100%; margin: 0; overflow: hidden; background: var(--tile);
     <div class="card" style="max-width:720px">
       <div class="row" style="justify-content:space-between"><h2>Pick a stage</h2><button class="btn ghost" id="btnStagesBack">BACK</button></div>
       <div class="grid" id="stageGrid"></div>
+      <div class="row" style="justify-content:space-between"><span class="hint" id="stageNote"></span><span class="row"><button class="btn ghost" id="btnReset">RESET PROGRESS</button><button class="btn" id="btnUnlockAll">UNLOCK ALL STAGES</button></span></div>
     </div>
   </div>
 
@@ -1516,8 +1517,22 @@ function openStages() {
     b.onclick = () => { SND.fx.click(); openIntro(i); };
     grid.appendChild(b);
   });
-  G.state = 'stages'; hudOn(false); show('stages');
+  refreshStageNote(); G.state = 'stages'; hudOn(false); show('stages');
 }
+
+// Stage-select extras: unlock everything (for trying any stage), or wipe saved progress (two taps).
+function refreshStageNote() {
+  const n = Object.keys(save.stars).length;
+  $('#stageNote').textContent = save.unlocked >= STAGES.length ? `All ${STAGES.length} stages unlocked. ${n} cleared.` : `${save.unlocked} of ${STAGES.length} stages unlocked.`;
+  $('#btnUnlockAll').hidden = save.unlocked >= STAGES.length;
+}
+let resetArmed = 0;
+$('#btnUnlockAll').onclick = () => { SND.fx.fanfare(); save.unlocked = STAGES.length; writeSave(); openStages(); };
+$('#btnReset').onclick = () => {
+  const b = $('#btnReset');
+  if (Date.now() - resetArmed > 3000) { resetArmed = Date.now(); b.textContent = 'TAP AGAIN TO RESET'; setTimeout(() => { b.textContent = 'RESET PROGRESS'; }, 3000); SND.fx.warn(); return; }
+  resetArmed = 0; b.textContent = 'RESET PROGRESS'; save.unlocked = 1; save.stars = {}; save.best = {}; writeSave(); SND.fx.sad(); openStages();
+};
 
 /* ============================== TOOLBAR ============================== */
 function buildToolbar() {

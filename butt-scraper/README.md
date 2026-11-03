@@ -23,6 +23,7 @@ Open `index.html` in any modern browser (desktop or phone). No build step and no
 - **30 stages and 35 tools.** Each stage has a poop type that is weak to some tools and resists others; the stage card and top bar show which. Later stages add swinging, hiding, clenching, healing, dodging, and a three-form final boss.
 - **Two meters:** *Stuck* and *Ouch*. Hit the skin with sharp or powerful tools and Gary yells. At 100% Ouch he faints and you retry.
 - Up to 3 stars per stage, based on time left and Gary's pain. Progress is saved in the browser.
+- To try any stage without playing through, open **Stages** and tap **Unlock all stages**. **Reset progress** (tap twice) locks them again and clears stars.
 
 ## Controls
 
